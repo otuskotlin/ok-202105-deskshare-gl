@@ -1,4 +1,4 @@
-package models.sql
+package dsl.sql
 
 abstract class Condition {
     fun and(initializer: Condition.() -> Unit) {
@@ -18,4 +18,5 @@ abstract class Condition {
     }
 
     protected abstract fun addCondition(condition: Condition)
+    abstract fun render(): String
 }

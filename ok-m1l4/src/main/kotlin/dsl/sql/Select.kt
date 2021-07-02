@@ -1,4 +1,4 @@
-package models.sql
+package dsl.sql
 
 class Select(private val fields: Set<String>) {
     companion object {
@@ -9,7 +9,7 @@ class Select(private val fields: Set<String>) {
         return fields.isNotEmpty()
     }
 
-    override fun toString(): String {
-        return "select ${fields.joinToString(", ")}"
+    fun render(): String {
+        return fields.joinToString(", ")
     }
 }

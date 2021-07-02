@@ -1,6 +1,6 @@
-package models.sql
+package dsl.sql
 
-class NotEq(private val column: String, private val value: Any?) : Condition() {
+class Eq(private val column: String, private val value: Any?) : Condition() {
 
     init {
         if (value != null && value !is Number && value !is String) {
@@ -12,11 +12,11 @@ class NotEq(private val column: String, private val value: Any?) : Condition() {
         throw IllegalStateException("Can't add a nested condition to the sql 'eq'")
     }
 
-    override fun toString(): String {
+    override fun render(): String {
         return when (value) {
-            null -> "$column !is null"
-            is String -> "$column != '$value'"
-            else -> "$column != $value"
+            null -> "$column is null"
+            is String -> "$column = '$value'"
+            else -> "$column = $value"
         }
     }
 }

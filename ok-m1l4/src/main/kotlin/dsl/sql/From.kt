@@ -1,4 +1,4 @@
-package models.sql
+package dsl.sql
 
 class From(private val table: String) {
     companion object {
@@ -9,7 +9,7 @@ class From(private val table: String) {
         return table.isNotEmpty()
     }
 
-    override fun toString(): String {
-        return "from $table"
+    fun redner(): String {
+        return table
     }
 }

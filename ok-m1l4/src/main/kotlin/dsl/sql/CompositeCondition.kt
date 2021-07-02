@@ -1,4 +1,4 @@
-package models.sql
+package dsl.sql
 
 open class CompositeCondition(private val sqlOperator: String) : Condition() {
     private val conditions = mutableListOf<Condition>()
@@ -7,12 +7,12 @@ open class CompositeCondition(private val sqlOperator: String) : Condition() {
         conditions += condition
     }
 
-    override fun toString(): String {
+    override fun render(): String {
         return if (conditions.size == 1) {
-            conditions.first().toString()
+            conditions.first().render()
         } else {
             conditions.joinToString(prefix = "(", postfix = ")", separator = " $sqlOperator ") {
-                "$it"
+                it.render()
             }
         }
     }

@@ -1,10 +1,9 @@
-package models.sql
+package dsl.sql
 
 data class Statement(
     val select: Select,
     val from: From,
     val condition: Condition?
-
 ) {
     fun isValid(): Boolean {
         if (!select.isValid()) {
@@ -16,13 +15,13 @@ data class Statement(
         return true
     }
 
-    override fun toString(): String {
+    fun render(): String {
         val parts = arrayListOf(
-            select.toString(),
-            from.toString(),
+            "select ${select.render()}",
+            "from ${from.redner()}",
         )
         if (condition != null) {
-            parts.add("where ${condition.toString()}")
+            parts.add("where ${condition.render()}")
         }
         return parts.joinToString(" ");
     }

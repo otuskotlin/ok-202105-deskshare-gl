@@ -1,7 +1,5 @@
 package dsl.sql
 
-import models.sql.*
-
 @DslMarker
 annotation class SqlDsl
 
@@ -32,7 +30,7 @@ class SqlSelectBuilder {
         if (!statement.isValid()) {
             throw Exception()
         }
-        return statement.toString()
+        return statement.render()
     }
 }
 
