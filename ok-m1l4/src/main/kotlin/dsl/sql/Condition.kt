@@ -1,5 +1,6 @@
 package dsl.sql
 
+@SqlDsl
 abstract class Condition {
     fun and(initializer: Condition.() -> Unit) {
         addCondition(And().apply(initializer))

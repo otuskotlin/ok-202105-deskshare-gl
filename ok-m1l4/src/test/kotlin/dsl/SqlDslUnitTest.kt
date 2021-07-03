@@ -63,7 +63,9 @@ class SqlDslUnitTest {
 
         val real = query {
             from("table")
-            where { "col_a" eq "id" }
+            where {
+                "col_a" eq "id"
+            }
         }
 
         checkSQL(expected, real)

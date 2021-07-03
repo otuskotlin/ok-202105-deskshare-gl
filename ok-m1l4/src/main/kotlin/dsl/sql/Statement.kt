@@ -1,9 +1,9 @@
 package dsl.sql
 
 data class Statement(
-    val select: Select,
-    val from: From,
-    val condition: Condition?
+    private val select: Select,
+    private val from: From,
+    private val condition: Condition?
 ) {
     fun isValid(): Boolean {
         if (!select.isValid()) {
