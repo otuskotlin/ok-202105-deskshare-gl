@@ -2,7 +2,7 @@ package user
 
 class UserTestBuilder {
 
-    companion object Factory {
+    companion object {
         const val defaultName = "name"
         const val defaultPassword = "123456"
         val defaultRole = UserRole.WRITE
@@ -10,44 +10,31 @@ class UserTestBuilder {
         fun userAdmin(
             username: String = defaultName,
             password: String = defaultPassword
-        ): User {
-            return userWithRole(username = username, password = password, role = UserRole.ADMIN)
-        }
+        ) = User.admin(username, password)
 
         fun userWrite(
             username: String = defaultName,
             password: String = defaultPassword
-        ): User {
-            return userWithRole(username = username, password = password, role = UserRole.WRITE)
-        }
+        ) = User.write(username, password)
 
         fun userRead(
             username: String = defaultName,
             password: String = defaultPassword
-        ): User {
-            return userWithRole(username = username, password = password, role = UserRole.READ)
-        }
-
-        fun userWithRole(
-            role: UserRole,
-            username: String = defaultName,
-            password: String = defaultPassword
-        ): User {
-            return validUser(username, password, role)
-        }
+        ) = User.read(username, password)
 
         fun validUser(
             username: String = defaultName,
             password: String = defaultPassword,
             role: UserRole = defaultRole
-        ): User {
-            return User(username, password, role)
-        }
+        ) = User(username, password, role)
 
         fun invalidUser(): User {
             val user = User(defaultName, defaultPassword, defaultRole)
             user.copy(username = "", password = "")
             return user
         }
+
+        fun list(count: Int = 10) = arrayListOf<User>().apply { repeat(count) { add(UserTestBuilder.userAdmin()) } }
+
     }
 }

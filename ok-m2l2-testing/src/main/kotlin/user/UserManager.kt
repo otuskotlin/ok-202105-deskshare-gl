@@ -8,5 +8,5 @@ class UserManager(private val provider: UserProvider) {
     ): Unit = provider.saveUser(User(username, password, role))
 
     fun getByUsername(username: String): User = provider.getOne(username)
-    fun getAll(username: String): Collection<User> = provider.getAll()
+    fun getAll(): Collection<User> = provider.getAll()
 }
