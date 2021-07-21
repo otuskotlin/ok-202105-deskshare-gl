@@ -1,7 +1,6 @@
 package user
 
 class UserTestBuilder {
-
     companion object {
         const val defaultName = "name"
         const val defaultPassword = "123456"
@@ -34,7 +33,8 @@ class UserTestBuilder {
             return user
         }
 
-        fun list(count: Int = 10) = arrayListOf<User>().apply { repeat(count) { add(UserTestBuilder.userAdmin()) } }
+        fun list(count: Int = 10) = arrayListOf<User>()
+            .apply { repeat(count) { add(UserTestBuilder.userAdmin()) } }
 
     }
 }
