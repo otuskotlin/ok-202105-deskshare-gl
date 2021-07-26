@@ -13,4 +13,4 @@ The system provides desk sharing and desk reservation system with following func
 - The user logs into the system before search or reservation can be used
 - There are two user roles: admin und user
     - Only user with `admin` role can do management task
-    - The user with role `user`  can only search, reserve or cancel
+    - The user with role `user` can only search, reserve or cancel
