@@ -11,5 +11,17 @@ data class Context(
     val requestReservation: ReservationModel = ReservationModel(),
     val responseReservation: ReservationModel = ReservationModel(),
     val errors: MutableList<IError> = mutableListOf(),
-    val status: String
-)
+    val status: ContextStatus = ContextStatus.STARTED
+) {
+    fun withRequestId(id: String) = copy(requestId = id)
+
+    fun withRequestLocale(locale: LocaleModel) = copy(requestLocale = locale)
+
+    fun withStatus(status: ContextStatus) = copy(status = status)
+
+    fun withError(error: IError): Context {
+        errors.add(error)
+        return this
+    }
+
+}

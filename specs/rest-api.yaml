@@ -1,0 +1,110 @@
+openapi: 3.0.1
+info:
+  title: Deskshare
+  description: 'Desksharing system'
+  license:
+    name: MIT open source license
+    url: https://github.com/otuskotlin/202105-otuskotlin-marketplace/blob/main/LICENSE
+  version: 0.0.1
+servers:
+  - url: https://localhost/
+tags:
+  -   name: "reservation"
+      description: "CRUD for workspace reservation"
+  -   name: "system"
+      description: "System calls"
+paths:
+  /reservation/{id}:
+    get:
+      tags:
+        - reservation
+      summary: Find a reservation by ID
+      description: Returns a single reservation
+      operationId: getReservationById
+      parameters:
+        - in: path
+          name: id
+          description: ID of reservation to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReservationDto'
+        400:
+          description: Invalid ID supplied
+          content: { }
+        404:
+          description: Reservation not found
+          content: { }
+        500:
+          description: Internal server error
+          content: { }
+
+  /health:
+    get:
+      tags:
+        - system
+      summary: Health route
+      operationId: health
+      responses:
+        204:
+          description: The system is healthy
+
+components:
+  schemas:
+    Reservation:
+      type: object
+      description: "Reservation"
+
+    CreateReservationDto:
+      type: object
+      description: "Create reservation Dto structure"
+      properties:
+        description:
+          type: string
+          title: Description
+          description: Description
+        userId:
+          type: string
+          format: uuid
+          title: User ID
+          description: User ID / owner of the reservation
+        workspaceId:
+          type: string
+          format: uuid
+          title: Workspace ID
+          description: Workspace ID for the reservation
+        from:
+          type: string
+          format: date-time
+          title: Date/time from
+        until:
+          type: string
+          format: date-time
+          title: Date/time until
+
+    UpdateReservationDto:
+      description: "Update reservation Dto structure"
+      allOf:
+        - $ref: '#/components/schemas/CreateReservationDto'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Reservation ID
+
+
