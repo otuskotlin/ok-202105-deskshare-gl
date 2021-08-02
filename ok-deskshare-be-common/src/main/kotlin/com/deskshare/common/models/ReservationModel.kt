@@ -9,5 +9,6 @@ data class ReservationModel(
     val from: LocalDateTime = LocalDateTime.now(),
     val until: LocalDateTime = LocalDateTime.now(),
     val description: String = "",
-    val status: ReservationStatus = ReservationStatus.PENDING
+    val status: ReservationStatus = ReservationStatus.PENDING,
+    val createdAt: LocalDateTime = LocalDateTime.now()
 )
