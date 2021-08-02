@@ -1,4 +1,4 @@
-package models.user
+package com.deskshare.common.models.user
 
 import java.util.*
 

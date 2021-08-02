@@ -1,4 +1,4 @@
-rootProject.name = "desk-share"
+rootProject.name = "deskshare"
 
 pluginManagement {
     plugins {
