@@ -14,7 +14,103 @@ tags:
   -   name: "system"
       description: "System calls"
 paths:
-  /reservation/{id}:
+  /reservations:
+    get:
+      tags:
+        - reservation
+      summary: Collection of reservations
+      description: Collection of reservations
+      operationId: collectionOfReservations
+      parameters:
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Collection of reservations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionOfReservationDto'
+        401:
+          description: Unauthorized
+        500:
+          description: Internal server error
+    post:
+      tags:
+        - reservation
+      summary: Create new reservation
+      description: Create new reservation
+      operationId: createReservation
+      parameters:
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: New reservation structure
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationDto'
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewReservationDto'
+        401:
+          description: Unauthorized
+        422:
+          description: Validation Error
+        500:
+          description: Internal server error
+
+  /reservations/{id}:
+    put:
+      tags:
+        - reservation
+      summary: Update the reservation by ID
+      description: Update the reservation by ID
+      operationId: updateReservation
+      parameters:
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Chnaged reservation structure
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReservationDto'
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewReservationDto'
+        401:
+          description: Unauthorized
+        422:
+          description: Validation Error
+        500:
+          description: Internal server error
+
     get:
       tags:
         - reservation
@@ -45,6 +141,9 @@ paths:
                 $ref: '#/components/schemas/ViewReservationDto'
         400:
           description: Invalid ID supplied
+          content: {}
+        401:
+          description: Unauthorized
           content: {}
         404:
           description: Reservation not found
@@ -83,8 +182,14 @@ paths:
         400:
           description: Invalid ID supplied
           content: { }
+        401:
+          description: Unauthorized
+          content: { }
         404:
           description: Reservation not found
+          content: { }
+        422:
+          description: Validation Error
           content: { }
         500:
           description: Internal server error
@@ -150,7 +255,7 @@ components:
           properties:
             createdAt:
               type: string
-              format: date-ttime
+              format: date-time
               description: Reservation created timestamp
 
     ReservationStatusDto:
@@ -162,5 +267,28 @@ components:
         - check_in
         - check_out
 
+    CollectionOfReservationDto:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+        reservations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ViewReservationDto'
 
-
+    PaginationMeta:
+      type: object
+      properties:
+        pageSize:
+          type: integer
+          format: int32
+          description: Size for one page
+        total:
+          type: integer
+          format: int32
+          description: Total number of items
+        currentPage:
+          type: integer
+          format: int32
+          description: Number of current page
