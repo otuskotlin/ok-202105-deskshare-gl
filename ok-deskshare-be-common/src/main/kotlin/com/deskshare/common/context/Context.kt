@@ -20,9 +20,7 @@ class Context private constructor(
         fun withRequestId(id: String) = apply { this.requestId = id }
         fun withRequestLocale(locale: LocaleModel) = apply { this.requestLocale = locale }
         fun withStatus(status: ContextStatus) = apply { this.status = status }
-        fun withError(error: IError) = apply {
-            this.errors.add(error)
-        }
+        fun withError(error: IError) = apply { this.errors.add(error) }
 
         fun build() = Context(
             requestId = requestId,
