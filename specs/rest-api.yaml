@@ -2,8 +2,6 @@ openapi: 3.0.1
 info:
   title: Deskshare
   description: 'Desksharing system'
-  license:
-    name: MIT open source license
   version: 0.0.1
 servers:
   - url: https://localhost/
@@ -15,7 +13,7 @@ tags:
   - name: "user"
     description: "User calls"
   - name: "workspace"
-    description: "CRUD for worspace infos"
+    description: "CRUD for workspace information"
 paths:
   /workspaces/{id}:
     get:
@@ -33,7 +31,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
         - in: header
           name: X-Request-ID
           description: Request ID
@@ -198,7 +195,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
         - in: header
           name: X-Request-ID
           description: Request ID
@@ -254,7 +250,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
         - in: header
           name: X-Request-ID
           description: Request ID
@@ -302,7 +297,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
         - in: header
           name: X-Request-ID
           description: Request ID
@@ -370,12 +364,10 @@ components:
           description: Description
         userId:
           type: string
-          format: uuid
-          title: User ID
-          description: User ID / owner of the reservation
+          title: User ID UUID
+          description: User ID UUID/ owner of the reservation
         workspaceId:
           type: string
-          format: uuid
           title: Workspace ID
           description: Workspace ID for the reservation
         from:
@@ -395,7 +387,6 @@ components:
           properties:
             id:
               type: string
-              format: uuid
               description: Reservation ID
             status:
               $ref: '#/components/schemas/ReservationStatusDto'
@@ -469,7 +460,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         building:
           type: string
         floor:
