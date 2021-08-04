@@ -104,6 +104,18 @@ paths:
       description: Collection of reservations
       operationId: collectionOfReservations
       parameters:
+        - in: path
+          name: pageSize
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
+        - in: path
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: The number of page
         - in: header
           name: X-Request-ID
           description: Request ID

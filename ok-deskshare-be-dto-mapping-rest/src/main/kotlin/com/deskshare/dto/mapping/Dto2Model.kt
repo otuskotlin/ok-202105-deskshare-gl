@@ -17,7 +17,7 @@ fun CreateReservationDto.toModel() = ReservationModel(
 )
 
 fun UpdateReservationDto.toModel() = ReservationModel(
-    id = ReservationIdModel(id.toString()),
+    id = ReservationIdModel(id ?: ""),
     description = description ?: "",
     userId = userId?.let { UserIdModel(userId.toString()) } ?: UserIdModel.NONE,
     workspaceId = workspaceId?.let { WorkspaceIdModel(workspaceId.toString()) } ?: WorkspaceIdModel.NONE,

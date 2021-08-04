@@ -1,27 +1,35 @@
 package com.deskshare.common.context
 
 import com.deskshare.common.models.error.IError
-import com.deskshare.common.models.ReservationModel
 import java.time.LocalDateTime
 
-data class Context(
-    val requestId: String = "",
-    val requestStartedAt: LocalDateTime = LocalDateTime.now(),
-    val requestLocale: LocaleModel = LocaleModel.EN,
-    val requestReservation: ReservationModel = ReservationModel(),
-    val responseReservation: ReservationModel = ReservationModel(),
-    val errors: MutableList<IError> = mutableListOf(),
-    val status: ContextStatus = ContextStatus.STARTED
+class Context private constructor(
+    val requestId: String,
+    val requestStartedAt: LocalDateTime,
+    val requestLocale: LocaleModel,
+    val errors: MutableList<IError>,
+    val status: ContextStatus
 ) {
-    fun withRequestId(id: String) = copy(requestId = id)
+    data class Builder(
+        var requestId: String = "",
+        var requestStartedAt: LocalDateTime = LocalDateTime.now(),
+        var requestLocale: LocaleModel = LocaleModel.EN,
+        var errors: MutableList<IError> = mutableListOf(),
+        var status: ContextStatus = ContextStatus.STARTED
+    ) {
+        fun withRequestId(id: String) = apply { this.requestId = id }
+        fun withRequestLocale(locale: LocaleModel) = apply { this.requestLocale = locale }
+        fun withStatus(status: ContextStatus) = apply { this.status = status }
+        fun withError(error: IError) = apply {
+            this.errors.add(error)
+        }
 
-    fun withRequestLocale(locale: LocaleModel) = copy(requestLocale = locale)
-
-    fun withStatus(status: ContextStatus) = copy(status = status)
-
-    fun withError(error: IError): Context {
-        errors.add(error)
-        return this
+        fun build() = Context(
+            requestId = requestId,
+            requestStartedAt = LocalDateTime.now(),
+            requestLocale = requestLocale,
+            errors = errors,
+            status = status
+        )
     }
-
 }
