@@ -9,13 +9,81 @@ info:
 servers:
   - url: https://localhost/
 tags:
-  -   name: "reservation"
-      description: "CRUD for workspace reservation"
-  -   name: "system"
-      description: "System calls"
+  - name: "reservation"
+    description: "CRUD for workspace reservation"
+  - name: "system"
+    description: "System calls"
+  - name: "user"
+    description: "User calls"
+  - name: "workspace"
+    description: "CRUD for worspace infos"
 paths:
+  /workspaces/{id}:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - workspace
+      summary: View workspace by ID
+      description: View workspace by ID
+      operationId: getWorkspaceByID
+      parameters:
+        - in: path
+          name: id
+          description: ID of workspace
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Workspace information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewWorkspaceDto'
+
+  /users/auth:
+    post:
+      tags:
+        - user
+      summary: User authentication
+      description: User authentication
+      operationId: userAuth
+      parameters:
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: User credentials structure
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginDto'
+        required: true
+      responses:
+        201:
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenDto'
+
   /reservations:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - reservation
       summary: Collection of reservations
@@ -41,6 +109,8 @@ paths:
         500:
           description: Internal server error
     post:
+      security:
+        - bearerAuth: [ ]
       tags:
         - reservation
       summary: Create new reservation
@@ -77,12 +147,21 @@ paths:
 
   /reservations/{id}:
     put:
+      security:
+        - bearerAuth: [ ]
       tags:
         - reservation
       summary: Update the reservation by ID
       description: Update the reservation by ID
       operationId: updateReservation
       parameters:
+        - in: path
+          name: id
+          description: ID of reservation to update
+          required: true
+          schema:
+            type: string
+            format: uuid
         - in: header
           name: X-Request-ID
           description: Request ID
@@ -112,6 +191,8 @@ paths:
           description: Internal server error
 
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - reservation
       summary: Find a reservation by ID
@@ -141,17 +222,19 @@ paths:
                 $ref: '#/components/schemas/ViewReservationDto'
         400:
           description: Invalid ID supplied
-          content: {}
+          content: { }
         401:
           description: Unauthorized
-          content: {}
+          content: { }
         404:
           description: Reservation not found
-          content: {}
+          content: { }
         500:
           description: Internal server error
-          content: {}
+          content: { }
     delete:
+      security:
+        - bearerAuth: [ ]
       tags:
         - reservation
       summary: Delete a reservation by ID
@@ -206,6 +289,12 @@ paths:
           description: The system is healthy
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     CreateReservationDto:
       type: object
@@ -292,3 +381,37 @@ components:
           type: integer
           format: int32
           description: Number of current page
+
+    UserLoginDto:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username
+        password:
+          type: string
+          format: password
+          description: Userpassword
+
+    TokenDto:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+
+    ViewWorkspaceDto:
+      type: object
+      properties:
+        building:
+          type: string
+        floor:
+          type: string
+        room:
+          type: string
+        equipments:
+          type: array
+          items:
+            type: string
+            description: Equipment name
+
