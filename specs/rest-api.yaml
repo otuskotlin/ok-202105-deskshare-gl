@@ -4,7 +4,6 @@ info:
   description: 'Desksharing system'
   license:
     name: MIT open source license
-    url: https://github.com/otuskotlin/202105-otuskotlin-marketplace/blob/main/LICENSE
   version: 0.0.1
 servers:
   - url: https://localhost/
@@ -49,6 +48,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ViewWorkspaceDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
 
   /users/auth:
     post:
@@ -79,6 +90,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
 
   /reservations:
     get:
@@ -106,8 +123,16 @@ paths:
                 $ref: '#/components/schemas/CollectionOfReservationDto'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         500:
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
     post:
       security:
         - bearerAuth: [ ]
@@ -140,10 +165,22 @@ paths:
                 $ref: '#/components/schemas/ViewReservationDto'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         422:
           description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         500:
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
 
   /reservations/{id}:
     put:
@@ -185,10 +222,22 @@ paths:
                 $ref: '#/components/schemas/ViewReservationDto'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         422:
           description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         500:
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
 
     get:
       security:
@@ -220,18 +269,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ViewReservationDto'
-        400:
-          description: Invalid ID supplied
-          content: { }
         401:
           description: Unauthorized
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         404:
           description: Reservation not found
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         500:
           description: Internal server error
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
     delete:
       security:
         - bearerAuth: [ ]
@@ -262,21 +317,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ViewReservationDto'
-        400:
-          description: Invalid ID supplied
-          content: { }
         401:
           description: Unauthorized
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         404:
           description: Reservation not found
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         422:
           description: Validation Error
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
         500:
           description: Internal server error
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
 
   /health:
     get:
@@ -403,6 +467,9 @@ components:
     ViewWorkspaceDto:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
         building:
           type: string
         floor:
@@ -412,6 +479,17 @@ components:
         equipments:
           type: array
           items:
-            type: string
-            description: Equipment name
+            $ref: '#/components/schemas/ViewEquipmentDto'
+
+    ViewEquipmentDto:
+      type: object
+      properties:
+        name:
+          type: string
+
+    ResponseErrorDto:
+      type: object
+      properties:
+        message:
+          type: string
 
