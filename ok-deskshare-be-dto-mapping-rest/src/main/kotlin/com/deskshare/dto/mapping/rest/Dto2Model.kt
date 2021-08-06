@@ -1,4 +1,4 @@
-package com.deskshare.dto.mapping
+package com.deskshare.dto.mapping.rest
 
 import com.deskshare.common.models.*
 import com.deskshare.openapi.models.CreateReservationDto
