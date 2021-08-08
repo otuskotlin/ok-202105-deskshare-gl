@@ -58,6 +58,55 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseErrorDto'
 
+  /workspaces:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - workspace
+      summary: Collection of workspaces
+      description: Collection of workspaces
+      operationId: getWorkspaces
+      parameters:
+        - in: path
+          name: pageSize
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
+        - in: path
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: The number of page
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Workspace information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionOfWorkspaceDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+
   /users/auth:
     post:
       tags:
@@ -478,7 +527,7 @@ components:
           type: string
         room:
           type: string
-        equipments:
+        equipment:
           type: array
           items:
             $ref: '#/components/schemas/ViewEquipmentDto'
@@ -494,4 +543,14 @@ components:
       properties:
         message:
           type: string
+
+    CollectionOfWorkspaceDto:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/ViewWorkspaceDto'
 
