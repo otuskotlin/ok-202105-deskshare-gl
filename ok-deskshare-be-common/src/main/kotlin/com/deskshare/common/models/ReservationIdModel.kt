@@ -8,4 +8,6 @@ value class ReservationIdModel(val id: String) {
         val NONE = ReservationIdModel("")
         val UUID = ReservationIdModel(randomUUID().toString())
     }
+
+    fun asString() = id
 }
