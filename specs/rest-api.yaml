@@ -1,0 +1,556 @@
+openapi: 3.0.1
+info:
+  title: Deskshare
+  description: 'Desksharing system'
+  version: 0.0.1
+servers:
+  - url: https://localhost/
+tags:
+  - name: "reservation"
+    description: "CRUD for workspace reservation"
+  - name: "system"
+    description: "System calls"
+  - name: "user"
+    description: "User calls"
+  - name: "workspace"
+    description: "CRUD for workspace information"
+paths:
+  /workspaces/{id}:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - workspace
+      summary: View workspace by ID
+      description: View workspace by ID
+      operationId: getWorkspaceByID
+      parameters:
+        - in: path
+          name: id
+          description: ID of workspace
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Workspace information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewWorkspaceDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+
+  /workspaces:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - workspace
+      summary: Collection of workspaces
+      description: Collection of workspaces
+      operationId: getWorkspaces
+      parameters:
+        - in: path
+          name: pageSize
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
+        - in: path
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: The number of page
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Workspace information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionOfWorkspaceDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+
+  /users/auth:
+    post:
+      tags:
+        - user
+      summary: User authentication
+      description: User authentication
+      operationId: userAuth
+      parameters:
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: User credentials structure
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginDto'
+        required: true
+      responses:
+        201:
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+
+  /reservations:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - reservation
+      summary: Collection of reservations
+      description: Collection of reservations
+      operationId: collectionOfReservations
+      parameters:
+        - in: path
+          name: pageSize
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
+        - in: path
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: The number of page
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Collection of reservations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionOfReservationDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - reservation
+      summary: Create new reservation
+      description: Create new reservation
+      operationId: createReservation
+      parameters:
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: New reservation structure
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationDto'
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewReservationDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+
+  /reservations/{id}:
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - reservation
+      summary: Update the reservation by ID
+      description: Update the reservation by ID
+      operationId: updateReservation
+      parameters:
+        - in: path
+          name: id
+          description: ID of reservation to update
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Chnaged reservation structure
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReservationDto'
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewReservationDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - reservation
+      summary: Find a reservation by ID
+      description: Returns a single reservation
+      operationId: getReservationById
+      parameters:
+        - in: path
+          name: id
+          description: ID of reservation to return
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewReservationDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        404:
+          description: Reservation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+    delete:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - reservation
+      summary: Delete a reservation by ID
+      description: Returns a single reservation
+      operationId: deleteReservationById
+      parameters:
+        - in: path
+          name: id
+          description: ID of reservation to return
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-Request-ID
+          description: Request ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewReservationDto'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        404:
+          description: Reservation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorDto'
+
+  /health:
+    get:
+      tags:
+        - system
+      summary: Health route
+      operationId: health
+      responses:
+        204:
+          description: The system is healthy
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CreateReservationDto:
+      type: object
+      description: "Create reservation Dto structure"
+      properties:
+        description:
+          type: string
+          title: Description
+          description: Description
+        userId:
+          type: string
+          title: User ID UUID
+          description: User ID UUID/ owner of the reservation
+        workspaceId:
+          type: string
+          title: Workspace ID
+          description: Workspace ID for the reservation
+        from:
+          type: string
+          format: date-time
+          title: Date/time from
+        until:
+          type: string
+          format: date-time
+          title: Date/time until
+
+    UpdateReservationDto:
+      description: "Update reservation Dto structure"
+      allOf:
+        - $ref: '#/components/schemas/CreateReservationDto'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: Reservation ID
+            status:
+              $ref: '#/components/schemas/ReservationStatusDto'
+
+    ViewReservationDto:
+      description: "View reservation Dto structure"
+      allOf:
+        - $ref: '#/components/schemas/UpdateReservationDto'
+        - type: object
+          properties:
+            createdAt:
+              type: string
+              format: date-time
+              description: Reservation created timestamp
+
+    ReservationStatusDto:
+      type: string
+      description: "Reservation status"
+      enum:
+        - pending
+        - canceled
+        - check_in
+        - check_out
+
+    CollectionOfReservationDto:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+        reservations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ViewReservationDto'
+
+    PaginationMeta:
+      type: object
+      properties:
+        pageSize:
+          type: integer
+          format: int32
+          description: Size for one page
+        total:
+          type: integer
+          format: int32
+          description: Total number of items
+        currentPage:
+          type: integer
+          format: int32
+          description: Number of current page
+
+    UserLoginDto:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username
+        password:
+          type: string
+          format: password
+          description: Userpassword
+
+    TokenDto:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+
+    ViewWorkspaceDto:
+      type: object
+      properties:
+        id:
+          type: string
+        building:
+          type: string
+        floor:
+          type: string
+        room:
+          type: string
+        equipment:
+          type: array
+          items:
+            $ref: '#/components/schemas/ViewEquipmentDto'
+
+    ViewEquipmentDto:
+      type: object
+      properties:
+        name:
+          type: string
+
+    ResponseErrorDto:
+      type: object
+      properties:
+        message:
+          type: string
+
+    CollectionOfWorkspaceDto:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/ViewWorkspaceDto'
+
