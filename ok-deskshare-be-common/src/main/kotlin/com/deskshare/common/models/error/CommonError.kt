@@ -7,10 +7,10 @@ class CommonError(
 ) : IError {
     companion object {
         fun fromCommon(message: String) =
-            CommonError(code = ErrorCode.COMMON, message = message, level = ErrorLevel.ERROR)
+            CommonError(code = ErrorCode.Common, message = message, level = ErrorLevel.ERROR)
         fun fromValidation(message: String) =
-            CommonError(code = ErrorCode.VALIDATION, message = message, level = ErrorLevel.ERROR)
+            CommonError(code = ErrorCode.Validation, message = message, level = ErrorLevel.ERROR)
         fun fromRuntime(message: String) =
-            CommonError(code = ErrorCode.RUNTIME, message = message, level = ErrorLevel.ERROR)
+            CommonError(code = ErrorCode.Runtime, message = message, level = ErrorLevel.ERROR)
     }
 }

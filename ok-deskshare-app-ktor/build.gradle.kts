@@ -26,4 +26,7 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation(ktor("server-test-host"))
+
+    implementation(project(":ok-deskshare-be-common"))
+    implementation(project(":ok-deskshare-be-dto-rest"))
 }
