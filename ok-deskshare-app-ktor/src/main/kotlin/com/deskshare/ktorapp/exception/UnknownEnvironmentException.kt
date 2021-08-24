@@ -1,3 +1,3 @@
-package com.deskshare.exception
+package com.deskshare.ktorapp.exception
 
 class UnknownEnvironmentException: Exception("Environment not defined")

@@ -1,0 +1,41 @@
+package com.deskshare.ktorapp
+
+import com.deskshare.ktorapp.controller.ReservationController
+import com.deskshare.ktorapp.service.ReservationCommandService
+import com.deskshare.ktorapp.service.ReservationQueryService
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.response.*
+import io.ktor.routing.*
+
+fun Route.health() = route("/health") {
+    get {
+        call.respond(status = HttpStatusCode.OK, message = "I am healthy :)")
+    }
+}
+
+fun Route.reservations() = route("/reservations") {
+    val reservationController = ReservationController(
+        ReservationCommandService(),
+        ReservationQueryService()
+    )
+
+    // commands
+    post {
+        reservationController.create(call);
+    }
+    delete("/{id}") {
+        reservationController.delete(call)
+    }
+    put("/{id}") {
+        reservationController.update(call)
+    }
+
+    // queries
+    get {
+        reservationController.findAll(call)
+    }
+    get("/{id}") {
+        reservationController.findById(call)
+    }
+}

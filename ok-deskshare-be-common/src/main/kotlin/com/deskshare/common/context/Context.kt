@@ -1,16 +1,24 @@
 package com.deskshare.common.context
 
-import com.deskshare.common.models.error.IError
-import java.time.LocalDateTime
+import com.deskshare.common.models.error.ErrorInterface
+import java.time.Instant
 
-class Context private constructor(
-    var requestId: String,
-    var requestStartedAt: LocalDateTime,
-    var requestLocale: LocaleModel,
-    var errors: MutableList<IError>,
-    var status: ContextStatus
-) {
+abstract class Context(val requestId: String = "", val requestLocale: LocaleModel = LocaleModel.EN) {
+    private var status = ContextStatus.Pending
+    private val requestStartedAt: Instant = Instant.now()
+    var error: ErrorInterface? = null
+        private set
+
     fun isSuccess() = status == ContextStatus.Success
     fun isFailed() = status == ContextStatus.Failure
     fun isPending() = status == ContextStatus.Pending
+
+    fun finishedOk() {
+        status = ContextStatus.Success
+    }
+
+    fun finishedWithError(error: ErrorInterface) {
+        this.error = error
+        status = ContextStatus.Failure
+    }
 }

@@ -1,4 +1,4 @@
-package com.deskshare
+package com.deskshare.ktorapp
 
 import com.deskshare.common.models.error.CommonError
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -13,7 +13,7 @@ import io.ktor.routing.*
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused")
-fun Application.module(testing: Boolean = false) {
+fun Application.module() {
     install(StatusPages) {
         when {
             isProd -> exception<Throwable> {
@@ -32,7 +32,6 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) {
         jackson {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
             enable(SerializationFeature.INDENT_OUTPUT)
             writerWithDefaultPrettyPrinter()
         }
@@ -44,7 +43,6 @@ fun Application.module(testing: Boolean = false) {
         method(HttpMethod.Delete)
         method(HttpMethod.Patch)
         header(HttpHeaders.Authorization)
-        header("MyCustomHeader")
         anyHost()
     }
 

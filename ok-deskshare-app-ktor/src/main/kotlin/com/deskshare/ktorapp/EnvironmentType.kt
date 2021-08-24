@@ -1,4 +1,4 @@
-package com.deskshare
+package com.deskshare.ktorapp
 
 enum class EnvironmentType {
     Prod,

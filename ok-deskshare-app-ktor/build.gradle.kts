@@ -26,7 +26,10 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation(ktor("server-test-host"))
+    testImplementation("com.google.code.gson:gson:2.8.6")
 
     implementation(project(":ok-deskshare-be-common"))
     implementation(project(":ok-deskshare-be-dto-rest"))
+    implementation(project(":ok-deskshare-be-dto-mapping-rest"))
+    implementation(project(":ok-deskshare-be-stubs"))
 }

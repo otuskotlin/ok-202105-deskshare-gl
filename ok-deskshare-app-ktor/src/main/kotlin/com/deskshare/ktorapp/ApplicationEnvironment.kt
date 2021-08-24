@@ -1,9 +1,10 @@
-package com.deskshare
+package com.deskshare.ktorapp
 
-import com.deskshare.exception.UnknownEnvironmentException
+import com.deskshare.ktorapp.exception.UnknownEnvironmentException
 import io.ktor.application.*
 
-val Application.env: EnvironmentType get() {
+val Application.env: EnvironmentType
+    get() {
     val env = environment.config.property("ktor.environment")
     return when(env.getString()) {
         "prod" -> EnvironmentType.Prod
