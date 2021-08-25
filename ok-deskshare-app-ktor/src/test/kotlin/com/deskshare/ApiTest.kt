@@ -10,7 +10,7 @@ import io.ktor.server.testing.*
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class ApplicationTest {
+class ApiTest {
     private val testEnv = createTestEnvironment {
         config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
     }

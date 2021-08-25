@@ -2,11 +2,6 @@ package com.deskshare.ktorapp.controller
 
 import com.deskshare.common.context.CommandContext
 import com.deskshare.common.context.QueryContext
-import com.deskshare.common.context.command.CreateCommand
-import com.deskshare.common.context.command.DeleteCommand
-import com.deskshare.common.context.query.FindByFilterQuery
-import com.deskshare.common.context.query.FindByIdQuery
-import com.deskshare.common.models.ReservationIdModel
 import com.deskshare.dto.mapping.rest.toDto
 import com.deskshare.dto.mapping.rest.toErrorDtoIfHave
 import com.deskshare.dto.mapping.rest.toModel
@@ -26,8 +21,8 @@ class ReservationController(
 ) {
     suspend fun create(call: ApplicationCall) {
         val newReservation = call.receive<CreateReservationDto>().toModel()
-        // todo refactor next line
-        val ctx = commandService.create(CommandContext(CreateCommand(newReservation)))
+
+        val ctx = commandService.create(CommandContext.forCreateReservation(newReservation))
         call.respond(
             status = HttpStatusCode.Created,
             message = ctx.responseReservation.toDto()
@@ -36,22 +31,36 @@ class ReservationController(
 
     suspend fun update(call: ApplicationCall) {
         val oldReservation = call.receive<UpdateReservationDto>().toModel()
-        // todo refactor next line
-        val ctx = commandService.create(CommandContext(CreateCommand(oldReservation)))
-        call.respond(ctx.responseReservation.toDto())
+        val ctx = commandService.update(CommandContext.forUpdateReservation(oldReservation))
+
+        if (ctx.isSuccess()) {
+            call.respond(ctx.responseReservation.toDto())
+        } else {
+            call.respond(
+                status = ctx.toHttpStatusCode(),
+                message = ctx.toErrorDtoIfHave()
+            )
+        }
     }
 
     suspend fun delete(call: ApplicationCall) {
         val id = call.parameters["id"].toString()
-        // todo refactor next line
-        val ctx = commandService.delete(CommandContext(DeleteCommand(ReservationIdModel(id))))
-        call.respond(ctx.responseReservation.toDto())
+
+        val ctx = commandService.delete(CommandContext.forDeleteReservation(id))
+        if (ctx.isSuccess()) {
+            call.respond(ctx.responseReservation.toDto())
+        } else {
+            call.respond(
+                status = ctx.toHttpStatusCode(),
+                message = ctx.toErrorDtoIfHave()
+            )
+        }
     }
 
     suspend fun findById(call: ApplicationCall) {
         val id = call.parameters["id"].toString()
-        val ctx = queryService.findById(QueryContext(FindByIdQuery(ReservationIdModel(id))))
 
+        val ctx = queryService.findById(QueryContext.forFindById(id))
         if (ctx.isSuccess()) {
             call.respond(ctx.responseReservations.map { it.toDto() })
         } else {
@@ -64,7 +73,7 @@ class ReservationController(
 
     suspend fun findAll(call: ApplicationCall) {
         // todo implement filter, paging etc.
-        val ctx = queryService.findByFilter(QueryContext(FindByFilterQuery()))
+        val ctx = queryService.findByFilter(QueryContext.forFindByFilter())
         call.respond(ctx.responseReservations.map { it.toDto() })
     }
 }
