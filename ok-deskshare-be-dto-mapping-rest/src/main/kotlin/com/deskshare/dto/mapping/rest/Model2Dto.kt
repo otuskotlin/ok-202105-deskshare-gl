@@ -1,6 +1,6 @@
 package com.deskshare.dto.mapping.rest
 
-import com.deskshare.common.context.Context
+import com.deskshare.common.context.RequestContext
 import com.deskshare.common.models.ReservationModel
 import com.deskshare.common.models.ReservationStatus
 import com.deskshare.common.models.error.ErrorInterface
@@ -27,6 +27,6 @@ fun ReservationModel.toDto() = ViewReservationDto(
 
 private fun ErrorInterface.toDto() = ResponseErrorDto(message = message)
 
-fun Context.toErrorDtoIfHave(): ResponseErrorDto {
+fun RequestContext.toErrorDtoIfHas(): ResponseErrorDto {
     return error?.let { it.toDto() } ?: ResponseErrorDto("")
 }

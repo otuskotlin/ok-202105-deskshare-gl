@@ -1,8 +1,8 @@
 package com.deskshare.ktorapp
 
 import com.deskshare.ktorapp.controller.ReservationController
-import com.deskshare.ktorapp.service.ReservationCommandService
-import com.deskshare.ktorapp.service.ReservationQueryService
+import com.deskshare.service.ReservationCommandService
+import com.deskshare.service.ReservationQueryService
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*

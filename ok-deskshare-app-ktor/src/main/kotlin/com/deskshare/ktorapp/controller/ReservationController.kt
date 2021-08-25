@@ -1,16 +1,18 @@
 package com.deskshare.ktorapp.controller
 
-import com.deskshare.common.context.CommandContext
-import com.deskshare.common.context.QueryContext
+import com.deskshare.common.context.CommandRequestContext
+import com.deskshare.common.context.QueryRequestContext
+import com.deskshare.common.models.error.CommonError
 import com.deskshare.dto.mapping.rest.toDto
-import com.deskshare.dto.mapping.rest.toErrorDtoIfHave
+import com.deskshare.dto.mapping.rest.toErrorDtoIfHas
 import com.deskshare.dto.mapping.rest.toModel
-import com.deskshare.ktorapp.service.ReservationCommandServiceInterface
-import com.deskshare.ktorapp.service.ReservationQueryServiceInterface
+import com.deskshare.service.ReservationCommandServiceInterface
+import com.deskshare.service.ReservationQueryServiceInterface
 import com.deskshare.ktorapp.service.toHttpStatusCode
 import com.deskshare.openapi.models.CreateReservationDto
 import com.deskshare.openapi.models.UpdateReservationDto
 import io.ktor.application.*
+import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -20,60 +22,105 @@ class ReservationController(
     private val queryService: ReservationQueryServiceInterface
 ) {
     suspend fun create(call: ApplicationCall) {
-        val newReservation = call.receive<CreateReservationDto>().toModel()
-
-        val ctx = commandService.create(CommandContext.forCreateReservation(newReservation))
-        call.respond(
-            status = HttpStatusCode.Created,
-            message = ctx.responseReservation.toDto()
+        val commandCtx = CommandRequestContext.forCreateReservation(
+            newModel = call.receive<CreateReservationDto>().toModel(),
+            requestId = call.callId.toString()
         )
+        try {
+            commandService.create(commandCtx).apply {
+                call.respond(
+                    status = HttpStatusCode.Created,
+                    message = toDto()
+                )
+            }
+        } catch (e: Throwable) {
+            with(commandCtx) {
+                finishedWithError(CommonError.fromThrowable(e))
+                call.respond(
+                    status = toHttpStatusCode(),
+                    message = toErrorDtoIfHas()
+                )
+            }
+        }
     }
 
     suspend fun update(call: ApplicationCall) {
-        val oldReservation = call.receive<UpdateReservationDto>().toModel()
-        val ctx = commandService.update(CommandContext.forUpdateReservation(oldReservation))
-
-        if (ctx.isSuccess()) {
-            call.respond(ctx.responseReservation.toDto())
-        } else {
-            call.respond(
-                status = ctx.toHttpStatusCode(),
-                message = ctx.toErrorDtoIfHave()
-            )
+        val commandCtx = CommandRequestContext.forUpdateReservation(
+            oldModel = call.receive<UpdateReservationDto>().toModel(),
+            requestId = call.callId.toString()
+        )
+        try {
+            commandService.update(commandCtx).apply {
+                call.respond(toDto())
+            }
+        } catch (e: Throwable) {
+            with(commandCtx) {
+                finishedWithError(CommonError.fromThrowable(e))
+                call.respond(
+                    status = toHttpStatusCode(),
+                    message = toErrorDtoIfHas()
+                )
+            }
         }
     }
 
     suspend fun delete(call: ApplicationCall) {
-        val id = call.parameters["id"].toString()
-
-        val ctx = commandService.delete(CommandContext.forDeleteReservation(id))
-        if (ctx.isSuccess()) {
-            call.respond(ctx.responseReservation.toDto())
-        } else {
-            call.respond(
-                status = ctx.toHttpStatusCode(),
-                message = ctx.toErrorDtoIfHave()
-            )
+        val commandCtx = CommandRequestContext.forDeleteReservation(
+            id = call.parameters["id"].toString(),
+            requestId = call.callId.toString()
+        )
+        try {
+            commandService.delete(commandCtx).apply {
+                call.respond(toDto())
+            }
+        } catch (e: Throwable) {
+            with(commandCtx) {
+                finishedWithError(CommonError.fromThrowable(e))
+                call.respond(
+                    status = toHttpStatusCode(),
+                    message = toErrorDtoIfHas()
+                )
+            }
         }
     }
 
     suspend fun findById(call: ApplicationCall) {
-        val id = call.parameters["id"].toString()
+        val queryCtx = QueryRequestContext.forFindById(
+            id = call.parameters["id"].toString(),
+            requestId = call.callId.toString()
+        )
 
-        val ctx = queryService.findById(QueryContext.forFindById(id))
-        if (ctx.isSuccess()) {
-            call.respond(ctx.responseReservations.map { it.toDto() })
-        } else {
-            call.respond(
-                status = ctx.toHttpStatusCode(),
-                message = ctx.toErrorDtoIfHave()
-            )
+        try {
+            queryService.findById(queryCtx).apply {
+                call.respond( toDto() )
+            }
+        } catch (e: Throwable) {
+            with(queryCtx) {
+                finishedWithError(com.deskshare.common.models.error.CommonError.fromThrowable(e))
+                call.respond(
+                    status = toHttpStatusCode(),
+                    message = toErrorDtoIfHas()
+                )
+            }
         }
     }
 
     suspend fun findAll(call: ApplicationCall) {
         // todo implement filter, paging etc.
-        val ctx = queryService.findByFilter(QueryContext.forFindByFilter())
-        call.respond(ctx.responseReservations.map { it.toDto() })
+        val queryCtx = QueryRequestContext.forFindByFilter(call.callId.toString())
+
+        try {
+            queryService.findByFilter(queryCtx).apply {
+                call.respond(map { it.toDto() })
+            }
+        } catch (e: Throwable) {
+            with(queryCtx) {
+                finishedWithError(com.deskshare.common.models.error.CommonError.fromThrowable(e))
+                call.respond(
+                    status = toHttpStatusCode(),
+                    message = toErrorDtoIfHas()
+                )
+            }
+        }
     }
 }

@@ -1,10 +1,10 @@
 package com.deskshare.ktorapp.service
 
-import com.deskshare.common.context.Context
+import com.deskshare.common.context.RequestContext
 import com.deskshare.common.models.error.ErrorCode
 import io.ktor.http.*
 
-fun Context.toHttpStatusCode(): HttpStatusCode {
+fun RequestContext.toHttpStatusCode(): HttpStatusCode {
     return if (!isFailed()) {
         HttpStatusCode.OK
     } else {

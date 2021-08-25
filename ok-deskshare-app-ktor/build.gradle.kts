@@ -31,5 +31,6 @@ dependencies {
     implementation(project(":ok-deskshare-be-common"))
     implementation(project(":ok-deskshare-be-dto-rest"))
     implementation(project(":ok-deskshare-be-dto-mapping-rest"))
+    implementation(project(":ok-deskshare-be-service"))
     implementation(project(":ok-deskshare-be-stubs"))
 }

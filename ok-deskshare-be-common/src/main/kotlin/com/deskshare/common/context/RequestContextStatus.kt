@@ -1,6 +1,6 @@
 package com.deskshare.common.context
 
-enum class ContextStatus {
+enum class RequestContextStatus {
     Success,
     Failure,
     Pending,

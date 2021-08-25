@@ -29,6 +29,11 @@ fun Application.module() {
         }
     }
 
+    install(CallId) {
+        retrieveFromHeader(HttpHeaders.XRequestId)
+        replyToHeader(HttpHeaders.XRequestId)
+    }
+
     install(ContentNegotiation) {
         jackson {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
