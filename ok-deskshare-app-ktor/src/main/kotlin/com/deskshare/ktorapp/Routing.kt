@@ -1,6 +1,7 @@
 package com.deskshare.ktorapp
 
 import com.deskshare.ktorapp.controller.ReservationController
+import com.deskshare.ktorapp.controller.ReservationControllerInterface
 import com.deskshare.service.ReservationCommandService
 import com.deskshare.service.ReservationQueryService
 import io.ktor.application.*
@@ -14,12 +15,7 @@ fun Route.health() = route("/health") {
     }
 }
 
-fun Route.reservations() = route("/reservations") {
-    val reservationController = ReservationController(
-        ReservationCommandService(),
-        ReservationQueryService()
-    )
-
+fun Route.reservations(reservationController: ReservationControllerInterface) = route("/reservations") {
     // commands
     post {
         reservationController.create(call);

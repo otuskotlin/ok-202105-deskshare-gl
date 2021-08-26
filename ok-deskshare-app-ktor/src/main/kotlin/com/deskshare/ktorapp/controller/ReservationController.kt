@@ -20,8 +20,8 @@ import io.ktor.response.*
 class ReservationController(
     private val commandService: ReservationCommandServiceInterface,
     private val queryService: ReservationQueryServiceInterface
-) {
-    suspend fun create(call: ApplicationCall) {
+) : ReservationControllerInterface {
+    override suspend fun create(call: ApplicationCall) {
         val commandCtx = CommandRequestContext.forCreateReservation(
             newModel = call.receive<CreateReservationDto>().toModel(),
             requestId = call.callId.toString()
@@ -44,7 +44,7 @@ class ReservationController(
         }
     }
 
-    suspend fun update(call: ApplicationCall) {
+    override suspend fun update(call: ApplicationCall) {
         val commandCtx = CommandRequestContext.forUpdateReservation(
             oldModel = call.receive<UpdateReservationDto>().toModel(),
             requestId = call.callId.toString()
@@ -64,7 +64,7 @@ class ReservationController(
         }
     }
 
-    suspend fun delete(call: ApplicationCall) {
+    override suspend fun delete(call: ApplicationCall) {
         val commandCtx = CommandRequestContext.forDeleteReservation(
             id = call.parameters["id"].toString(),
             requestId = call.callId.toString()
@@ -84,7 +84,7 @@ class ReservationController(
         }
     }
 
-    suspend fun findById(call: ApplicationCall) {
+    override suspend fun findById(call: ApplicationCall) {
         val queryCtx = QueryRequestContext.forFindById(
             id = call.parameters["id"].toString(),
             requestId = call.callId.toString()
@@ -105,7 +105,7 @@ class ReservationController(
         }
     }
 
-    suspend fun findAll(call: ApplicationCall) {
+    override suspend fun findAll(call: ApplicationCall) {
         // todo implement filter, paging etc.
         val queryCtx = QueryRequestContext.forFindByFilter(call.callId.toString())
 

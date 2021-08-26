@@ -1,5 +1,6 @@
 val ktorVersion: String by project
 val logbackVersion: String by project
+val koinVersion: String by project
 
 fun DependencyHandler.ktor(module: String, version: String? = ktorVersion): Any =
     "io.ktor:ktor-$module:$version"
@@ -23,6 +24,9 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
+
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+    implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
 
     testImplementation(kotlin("test-junit"))
     testImplementation(ktor("server-test-host"))
