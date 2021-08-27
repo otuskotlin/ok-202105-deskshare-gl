@@ -16,9 +16,17 @@ import kotlin.test.assertEquals
 
 class ApiTest {
     private val om = ObjectMapper()
-
     private val testEnv = createTestEnvironment {
         config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
+    }
+
+    private inline fun <reified T> testCommand(method: HttpMethod, uri: String, message: Any?, crossinline block: T.(call: TestApplicationCall) -> Unit) = withApplication(testEnv) {
+        handleRequest(method, uri) {
+            addHeader(HttpHeaders.ContentType, "application/json")
+            message?.let { setBody(om.writeValueAsString(message)) }
+        }.apply {
+            om.readValue(response.content, T::class.java).block(this)
+        }
     }
 
     @Test
@@ -61,63 +69,56 @@ class ApiTest {
     }
 
     @Test
-    fun `new reservation`() = withApplication(testEnv) {
-        with(handleRequest(HttpMethod.Post, "/reservations") {
-            addHeader(HttpHeaders.ContentType, "application/json")
-            setBody(
-                om.writeValueAsString(
-                    CreateReservationDto(
-                        description = "test",
-                        userId = "123",
-                        workspaceId = "123",
-                        from = "2021-01-01T10:10:23",
-                        until = "2021-01-01T15:10:23"
-                    )
+    fun `new reservation`() {
+        val dto = CreateReservationDto(
+            description = "test",
+            userId = "123",
+            workspaceId = "123",
+            from = "2021-01-01T10:10:23",
+            until = "2021-01-01T15:10:23"
+        )
+
+        testCommand<ViewReservationDto>(
+            method = HttpMethod.Post,
+            uri = "/reservations",
+            message = dto) { call: TestApplicationCall ->
+                assertEquals(HttpStatusCode.Created, call.response.status())
+                assertEquals(
+                    this,
+                    Reservation.getPendingModel().toDto()
                 )
-            )
-        }) {
-            assertEquals(HttpStatusCode.Created, response.status())
-            assertEquals(
-                om.readValue(response.content, ViewReservationDto::class.java),
-                Reservation.getPendingModel().toDto()
+        }
+    }
+
+    @Test
+    fun `update reservation by id`() {
+        val dto = UpdateReservationDto(
+            description = "test",
+            userId = "123",
+            workspaceId = "123",
+            from = "2021-01-01T10:10:23",
+            until = "2021-01-01T15:10:23",
+            id = "123"
+        )
+
+        testCommand<ViewReservationDto>(
+            method = HttpMethod.Put,
+            uri = "/reservations/123",
+            message = dto) { call: TestApplicationCall ->
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertEquals(this, Reservation.getModel().toDto()
             )
         }
     }
 
     @Test
-    fun `update reservation by id`() = withApplication(testEnv) {
-        with(handleRequest(HttpMethod.Put, "/reservations/123") {
-            addHeader(HttpHeaders.ContentType, "application/json")
-            setBody(
-                om.writeValueAsString(
-                    UpdateReservationDto(
-                        description = "test",
-                        userId = "123",
-                        workspaceId = "123",
-                        from = "2021-01-01T10:10:23",
-                        until = "2021-01-01T15:10:23",
-                        id = "123"
-                    )
-                )
-            )
-        }) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(
-                om.readValue(response.content, ViewReservationDto::class.java),
-                Reservation.getModel().toDto()
-            )
-        }
-    }
-
-    @Test
-    fun `delete reservation by id`() = withApplication(testEnv) {
-        with(handleRequest(HttpMethod.Delete, "/reservations/123") {
-            addHeader(HttpHeaders.ContentType, "application/json")
-        }) {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertEquals(
-                om.readValue(response.content, ViewReservationDto::class.java),
-                Reservation.getCanceledModel().toDto()
+    fun `delete reservation by id`() {
+        testCommand<ViewReservationDto>(
+            method = HttpMethod.Delete,
+            uri = "/reservations/123",
+            message = null) { call: TestApplicationCall ->
+                assertEquals(HttpStatusCode.OK, call.response.status())
+                assertEquals(this, Reservation.getCanceledModel().toDto()
             )
         }
     }
