@@ -4,10 +4,12 @@ pluginManagement {
     plugins {
         val kotlinVersion: String by settings
         val openApiVersion: String by settings
+        val bmuschkoVersion: String by settings
 
         kotlin("jvm") version kotlinVersion
         kotlin("multiplatform") version kotlinVersion
         id("org.openapi.generator") version openApiVersion
+        id("com.bmuschko.docker-java-application") version bmuschkoVersion
     }
 }
 

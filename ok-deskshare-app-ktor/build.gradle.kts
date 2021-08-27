@@ -8,6 +8,23 @@ fun DependencyHandler.ktor(module: String, version: String? = ktorVersion): Any 
 plugins {
     application
     kotlin("jvm")
+    id("com.bmuschko.docker-java-application")
+}
+
+docker {
+    javaApplication {
+        mainClassName.set(application.mainClass)
+        baseImage.set("adoptopenjdk/openjdk11:alpine-jre")
+        ports.set(listOf(8080))
+        val imageName = project.name
+        images.set(
+            listOf(
+                "$imageName:${project.version}",
+                "$imageName:latest"
+            )
+        )
+        jvmArgs.set(listOf("-Xms256m", "-Xmx512m"))
+    }
 }
 
 application {
@@ -30,7 +47,6 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation(ktor("server-test-host"))
-    testImplementation("com.google.code.gson:gson:2.8.6")
 
     implementation(project(":ok-deskshare-be-common"))
     implementation(project(":ok-deskshare-be-dto-rest"))

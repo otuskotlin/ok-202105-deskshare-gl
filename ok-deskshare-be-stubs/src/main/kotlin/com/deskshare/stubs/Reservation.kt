@@ -50,6 +50,8 @@ object Reservation {
 
     fun getModel() = reservationPending
 
+    fun getPendingModel() = getModel()
+
     fun getCanceledModel() = reservationCanceled
 
     fun isCorrectId(id: String) = id == "123"
