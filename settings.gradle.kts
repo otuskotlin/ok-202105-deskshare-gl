@@ -4,10 +4,12 @@ pluginManagement {
     plugins {
         val kotlinVersion: String by settings
         val openApiVersion: String by settings
+        val bmuschkoVersion: String by settings
 
         kotlin("jvm") version kotlinVersion
         kotlin("multiplatform") version kotlinVersion
         id("org.openapi.generator") version openApiVersion
+        id("com.bmuschko.docker-java-application") version bmuschkoVersion
     }
 }
 
@@ -21,3 +23,6 @@ include("ok-deskshare-be-dto-rest")
 include("ok-deskshare-be-dto-mapping-rest")
 include("ok-deskshare-be-common-cor")
 include("ok-deskshare-be-common-validation")
+include("ok-deskshare-app-ktor")
+include("ok-deskshare-be-stubs")
+include("ok-deskshare-be-service")
