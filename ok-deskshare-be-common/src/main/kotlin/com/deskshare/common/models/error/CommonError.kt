@@ -1,16 +1,29 @@
 package com.deskshare.common.models.error
 
+import com.deskshare.common.exception.NotFoundReservationException
+
 class CommonError(
     override val code: ErrorCode,
     override val level: ErrorLevel,
     override val message: String
-) : IError {
+) : ErrorInterface {
+
     companion object {
-        fun fromCommon(message: String) =
-            CommonError(code = ErrorCode.COMMON, message = message, level = ErrorLevel.ERROR)
+        fun fromThrowable(e: Throwable) = when(e) {
+            is NotFoundReservationException -> fromNotFound(e.message.toString())
+            else -> fromRuntime(e.message.toString())
+        }
+
+        fun fromNotFound(message: String) =
+            CommonError(code = ErrorCode.NotFound, message = message, level = ErrorLevel.ERROR)
+
         fun fromValidation(message: String) =
-            CommonError(code = ErrorCode.VALIDATION, message = message, level = ErrorLevel.ERROR)
+            CommonError(code = ErrorCode.Validation, message = message, level = ErrorLevel.ERROR)
+
+        fun fromAuth(message: String) =
+            CommonError(code = ErrorCode.Authentication, message = message, level = ErrorLevel.ERROR)
+
         fun fromRuntime(message: String) =
-            CommonError(code = ErrorCode.RUNTIME, message = message, level = ErrorLevel.ERROR)
+            CommonError(code = ErrorCode.Runtime, message = message, level = ErrorLevel.ERROR)
     }
 }

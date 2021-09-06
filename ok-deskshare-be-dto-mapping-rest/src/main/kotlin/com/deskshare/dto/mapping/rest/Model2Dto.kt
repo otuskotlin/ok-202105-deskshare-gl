@@ -1,8 +1,11 @@
 package com.deskshare.dto.mapping.rest
 
+import com.deskshare.common.context.RequestContext
 import com.deskshare.common.models.ReservationModel
 import com.deskshare.common.models.ReservationStatus
+import com.deskshare.common.models.error.ErrorInterface
 import com.deskshare.openapi.models.ReservationStatusDto
+import com.deskshare.openapi.models.ResponseErrorDto
 import com.deskshare.openapi.models.ViewReservationDto
 import java.time.format.DateTimeFormatter
 
@@ -14,10 +17,16 @@ fun ReservationModel.toDto() = ViewReservationDto(
     from = from.format(DateTimeFormatter.ISO_DATE_TIME),
     until = from.format(DateTimeFormatter.ISO_DATE_TIME),
     createdAt = createdAt.format(DateTimeFormatter.ISO_DATE_TIME),
-    status = when(status) {
+    status = when (status) {
         ReservationStatus.PENDING -> ReservationStatusDto.PENDING
         ReservationStatus.CANCELED -> ReservationStatusDto.CANCELED
         ReservationStatus.CHECK_IN -> ReservationStatusDto.CHECK_IN
         ReservationStatus.CHECK_OUT -> ReservationStatusDto.CHECK_OUT
     }
 )
+
+private fun ErrorInterface.toDto() = ResponseErrorDto(message = message)
+
+fun RequestContext<*>.toErrorDtoIfHas(): List<ResponseErrorDto> {
+    return errors.map { it.toDto() }
+}
