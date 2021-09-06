@@ -3,6 +3,7 @@ package com.deskshare.cor.dsl
 import com.deskshare.cor.CorExecInterface
 import com.deskshare.cor.worker.CorWorker
 
+@CorDslMarker
 data class CorWorkerConfigurationDsl<T>(
     var logger: T.(msg: String) -> Unit = { msg: String -> },
     var logPropagation: Boolean = true

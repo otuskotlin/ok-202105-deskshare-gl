@@ -1,5 +1,6 @@
 import com.deskshare.cor.dsl.chain
 import com.deskshare.cor.dsl.configuration
+import com.deskshare.cor.dsl.parallel
 import com.deskshare.cor.dsl.worker
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
@@ -58,6 +59,18 @@ class CorTest {
 
         assertEquals(1, ctx.foo)
         assertEquals(11, ctx.bar)
+    }
+
+    @Test
+    fun `parallel test`() {
+        val ctx = TestContext()
+        val chain = chain<TestContext> {
+            title = "parallel test"
+            description = ""
+            parallel {
+
+            }
+        }
     }
 }
 
