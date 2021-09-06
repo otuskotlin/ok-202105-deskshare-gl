@@ -7,8 +7,9 @@ fun <T> chain(block: CorChainDsl<T>.() -> Unit): CorChainDsl<T> = CorChainDsl<T>
 
 @CorDslMarker
 fun <T> CorChainDslInterface<T>.chain(block: CorChainDslInterface<T>.() -> Unit) {
-    add(CorChainDsl<T>().apply(block))
-    addConfig(getConfig())
+    val chain = CorChainDsl<T>().apply(block)
+    add(chain)
+    chain.addConfig(getConfig())
 }
 
 @CorDslMarker

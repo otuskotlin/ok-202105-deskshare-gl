@@ -16,13 +16,7 @@ class CorTest {
             description = ""
 
             configuration {
-                logger { msg: String ->
-                    val builder = StringBuilder()
-                        .append(Instant.now().toString())
-                        .append(" ")
-                        .append(msg)
-                    println(builder.toString())
-                }
+                logger { msg: String -> log(msg, this) }
                 logPropagation = true
             }
 
@@ -67,14 +61,44 @@ class CorTest {
         val chain = chain<TestContext> {
             title = "parallel test"
             description = ""
-            parallel {
 
+            configuration {
+                logger { msg: String -> log(msg, this) }
+                logPropagation = true
             }
-        }
+
+            parallel {
+                title = "parallel"
+                description = ""
+                worker {
+                    title = "foo"
+                    supports { foo == 0 }
+                    handle { foo++ }
+                }
+                worker {
+                    title = "bar"
+                    supports { bar == 0 }
+                    handle { bar++ }
+                }
+            }
+        }.build()
+
+        runBlocking { chain.exec(ctx) }
+
+        assertEquals(1, ctx.foo)
+        assertEquals(1, ctx.bar)
     }
 }
 
 data class TestContext(var foo: Int = 0, var bar: Int = 0)
+
+internal fun log(msg: String, ctx: TestContext) {
+    val builder = StringBuilder()
+        .append(Instant.now().toString())
+        .append(" ")
+        .append(msg)
+    println(builder.toString())
+}
 
 
 
