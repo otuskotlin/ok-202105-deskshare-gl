@@ -92,7 +92,7 @@ class CorTest {
 
 data class TestContext(var foo: Int = 0, var bar: Int = 0)
 
-internal fun log(msg: String, ctx: TestContext) {
+private fun log(msg: String, ctx: TestContext) {
     val builder = StringBuilder()
         .append(Instant.now().toString())
         .append(" ")
