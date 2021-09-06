@@ -8,10 +8,12 @@ import com.deskshare.common.context.query.FindByFilterQueryRequest
 import com.deskshare.common.context.query.FindByIdQueryRequest
 
 interface ReservationServiceInterface {
-    suspend fun <T : CreateCommandRequest> create(ctx: RequestContext<T>): RequestContext<T>
-    suspend fun <T : UpdateCommandRequest> update(ctx: RequestContext<T>): RequestContext<T>
-    suspend fun <T : DeleteCommandRequest> delete(ctx: RequestContext<T>): RequestContext<T>
+    // commands
+    suspend fun create(ctx: RequestContext<CreateCommandRequest>)
+    suspend fun update(ctx: RequestContext<UpdateCommandRequest>)
+    suspend fun delete(ctx: RequestContext<DeleteCommandRequest>)
 
-    suspend fun <T : FindByIdQueryRequest> findById(ctx: RequestContext<T>): RequestContext<T>
-    suspend fun <T : FindByFilterQueryRequest> findByFilter(ctx: RequestContext<T>): RequestContext<T>
+    // queries
+    suspend fun findById(ctx: RequestContext<FindByIdQueryRequest>)
+    suspend fun findByFilter(ctx: RequestContext<FindByFilterQueryRequest>)
 }

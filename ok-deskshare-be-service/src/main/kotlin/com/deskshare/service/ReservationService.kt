@@ -9,28 +9,38 @@ import com.deskshare.common.context.query.FindByIdQueryRequest
 import com.deskshare.stubs.Reservation
 
 class ReservationService : ReservationServiceInterface {
-    override suspend fun <T : CreateCommandRequest> create(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModel = Reservation.getModel()
-        finishedOk()
+    override suspend fun create(ctx: RequestContext<CreateCommandRequest>) {
+        ctx.apply {
+            request.responseModel = Reservation.getModel()
+            finishedOk()
+        }
     }
 
-    override suspend fun <T : UpdateCommandRequest> update(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModel = Reservation.getModel()
-        finishedOk()
+    override suspend fun update(ctx: RequestContext<UpdateCommandRequest>) {
+        ctx.apply {
+            request.responseModel = Reservation.getModel()
+            finishedOk()
+        }
     }
 
-    override suspend fun <T : DeleteCommandRequest> delete(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModel = Reservation.getCanceledModel()
-        finishedOk()
+    override suspend fun delete(ctx: RequestContext<DeleteCommandRequest>) {
+        ctx.apply {
+            request.responseModel = Reservation.getCanceledModel()
+            finishedOk()
+        }
     }
 
-    override suspend fun <T : FindByIdQueryRequest> findById(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModels.add(Reservation.getModel())
-        finishedOk()
+    override suspend fun findById(ctx: RequestContext<FindByIdQueryRequest>) {
+        ctx.apply {
+            request.responseModels.add(Reservation.getModel())
+            finishedOk()
+        }
     }
 
-    override suspend fun <T : FindByFilterQueryRequest> findByFilter(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModels.addAll(Reservation.getModels())
-        finishedOk()
+    override suspend fun findByFilter(ctx: RequestContext<FindByFilterQueryRequest>) {
+        ctx.apply {
+            request.responseModels.addAll(Reservation.getModels())
+            finishedOk()
+        }
     }
 }

@@ -21,18 +21,21 @@ import io.ktor.request.*
 import io.ktor.response.*
 
 class ReservationController(private val service: ReservationServiceInterface) : ReservationControllerInterface {
+    // @todo read from header
+    private val stubCase: Boolean = true
+
     override suspend fun create(call: ApplicationCall) {
         val commandCtx = RequestContext(
             requestId = call.callId.toString(),
             request = CreateCommandRequest(call.receive<CreateReservationDto>().toModel()),
+            stubCase = stubCase
         )
         try {
-            service.create(commandCtx).apply {
-                call.respond(
-                    status = HttpStatusCode.Created,
-                    message = request.responseModel.toDto()
-                )
-            }
+            service.create(commandCtx)
+            call.respond(
+                status = HttpStatusCode.Created,
+                message = commandCtx.request.responseModel.toDto()
+            )
         } catch (e: Throwable) {
             with(commandCtx) {
                 finishedWithError(CommonError.fromThrowable(e))
@@ -47,13 +50,13 @@ class ReservationController(private val service: ReservationServiceInterface) : 
     override suspend fun update(call: ApplicationCall) {
         val commandCtx = RequestContext(
             requestId = call.callId.toString(),
-            request = UpdateCommandRequest(requestModel = call.receive<UpdateReservationDto>().toModel())
+            request = UpdateCommandRequest(requestModel = call.receive<UpdateReservationDto>().toModel()),
+            stubCase = stubCase
         )
 
         try {
-            service.update(commandCtx).apply {
-                call.respond(request.responseModel.toDto())
-            }
+            service.update(commandCtx)
+            call.respond(commandCtx.request.responseModel.toDto())
         } catch (e: Throwable) {
             with(commandCtx) {
                 finishedWithError(CommonError.fromThrowable(e))
@@ -68,13 +71,13 @@ class ReservationController(private val service: ReservationServiceInterface) : 
     override suspend fun delete(call: ApplicationCall) {
         val commandCtx = RequestContext(
             requestId = call.callId.toString(),
-            request = DeleteCommandRequest(requestModelId = ReservationIdModel(call.parameters["id"].toString()))
+            request = DeleteCommandRequest(requestModelId = ReservationIdModel(call.parameters["id"].toString())),
+            stubCase = stubCase
         )
 
         try {
-            service.delete(commandCtx).apply {
-                call.respond(request.responseModel.toDto())
-            }
+            service.delete(commandCtx)
+            call.respond(commandCtx.request.responseModel.toDto())
         } catch (e: Throwable) {
             with(commandCtx) {
                 finishedWithError(CommonError.fromThrowable(e))
@@ -89,13 +92,13 @@ class ReservationController(private val service: ReservationServiceInterface) : 
     override suspend fun findById(call: ApplicationCall) {
         val queryCtx = RequestContext(
             requestId = call.callId.toString(),
-            request = FindByIdQueryRequest(reservationId = ReservationIdModel(call.parameters["id"].toString()))
+            request = FindByIdQueryRequest(reservationId = ReservationIdModel(call.parameters["id"].toString())),
+            stubCase = stubCase
         )
 
         try {
-            service.findById(queryCtx).apply {
-                call.respond(request.responseModels.map { it.toDto() })
-            }
+            service.findById(queryCtx)
+            call.respond(queryCtx.request.responseModels.map { it.toDto() })
         } catch (e: Throwable) {
             with(queryCtx) {
                 finishedWithError(com.deskshare.common.models.error.CommonError.fromThrowable(e))
@@ -111,13 +114,13 @@ class ReservationController(private val service: ReservationServiceInterface) : 
         // todo implement filter, paging etc.
         val queryCtx = RequestContext(
             requestId = call.callId.toString(),
-            request = FindByFilterQueryRequest()
+            request = FindByFilterQueryRequest(),
+            stubCase = stubCase
         )
 
         try {
-            service.findByFilter(queryCtx).apply {
-                call.respond(request.responseModels.map { it.toDto() })
-            }
+            service.findByFilter(queryCtx)
+            call.respond(queryCtx.request.responseModels.map { it.toDto() })
         } catch (e: Throwable) {
             with(queryCtx) {
                 finishedWithError(com.deskshare.common.models.error.CommonError.fromThrowable(e))
