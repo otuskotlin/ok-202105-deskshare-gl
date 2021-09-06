@@ -3,22 +3,29 @@ package com.deskshare.common.context
 import com.deskshare.common.models.error.ErrorInterface
 import java.time.Instant
 
-abstract class RequestContext(val requestId: String = "") {
+data class RequestContext<T: RequestInterface>(
+    val requestId: String = "",
+    val request: T
+) {
     private var status = RequestContextStatus.Pending
     private val requestStartedAt: Instant = Instant.now()
-    var error: ErrorInterface? = null
+    var errors: MutableList<ErrorInterface> = mutableListOf()
         private set
 
     fun isSuccess() = status == RequestContextStatus.Success
     fun isFailed() = status == RequestContextStatus.Failure
     fun isPending() = status == RequestContextStatus.Pending
 
+    fun addError(error: ErrorInterface) {
+        errors.add(error)
+        status = RequestContextStatus.Failure
+    }
+
     fun finishedOk() {
         status = RequestContextStatus.Success
     }
 
     fun finishedWithError(error: ErrorInterface) {
-        this.error = error
-        status = RequestContextStatus.Failure
+        addError(error)
     }
 }

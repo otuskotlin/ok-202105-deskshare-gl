@@ -27,6 +27,6 @@ fun ReservationModel.toDto() = ViewReservationDto(
 
 private fun ErrorInterface.toDto() = ResponseErrorDto(message = message)
 
-fun RequestContext.toErrorDtoIfHas(): ResponseErrorDto {
-    return error?.let { it.toDto() } ?: ResponseErrorDto("")
+fun RequestContext<*>.toErrorDtoIfHas(): List<ResponseErrorDto> {
+    return errors.map { it.toDto() }
 }

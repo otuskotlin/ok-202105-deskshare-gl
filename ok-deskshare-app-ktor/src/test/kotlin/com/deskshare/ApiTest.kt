@@ -55,13 +55,6 @@ class ApiTest {
     }
 
     @Test
-    fun `get reservation by id (not found)`() = withApplication(testEnv) {
-        with(handleRequest(HttpMethod.Get, "/reservations/123123123")) {
-            assertEquals(HttpStatusCode.NotFound, response.status())
-        }
-    }
-
-    @Test
     fun `get all reservations`() = withApplication(testEnv) {
         with(handleRequest(HttpMethod.Get, "/reservations")) {
             assertEquals(HttpStatusCode.OK, response.status())
