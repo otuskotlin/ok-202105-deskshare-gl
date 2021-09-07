@@ -6,41 +6,28 @@ import com.deskshare.common.context.command.DeleteCommandRequest
 import com.deskshare.common.context.command.UpdateCommandRequest
 import com.deskshare.common.context.query.FindByFilterQueryRequest
 import com.deskshare.common.context.query.FindByIdQueryRequest
-import com.deskshare.stubs.ReservationStub
+import com.deskshare.logics.ReservationManager
 
 class ReservationService : ReservationServiceInterface {
+    private val manager: ReservationManager = ReservationManager()
+
     override suspend fun create(ctx: RequestContext<CreateCommandRequest>) {
-        ctx.apply {
-            request.responseModel = ReservationStub.getModel()
-            finishedOk()
-        }
+        manager.create(ctx)
     }
 
     override suspend fun update(ctx: RequestContext<UpdateCommandRequest>) {
-        ctx.apply {
-            request.responseModel = ReservationStub.getModel()
-            finishedOk()
-        }
+        manager.update(ctx)
     }
 
     override suspend fun delete(ctx: RequestContext<DeleteCommandRequest>) {
-        ctx.apply {
-            request.responseModel = ReservationStub.getCanceledModel()
-            finishedOk()
-        }
+        manager.delete(ctx)
     }
 
     override suspend fun findById(ctx: RequestContext<FindByIdQueryRequest>) {
-        ctx.apply {
-            request.responseModels.add(ReservationStub.getModel())
-            finishedOk()
-        }
+        manager.findById(ctx)
     }
 
     override suspend fun findByFilter(ctx: RequestContext<FindByFilterQueryRequest>) {
-        ctx.apply {
-            request.responseModels.addAll(ReservationStub.getModels())
-            finishedOk()
-        }
+        manager.findByFilter(ctx)
     }
 }

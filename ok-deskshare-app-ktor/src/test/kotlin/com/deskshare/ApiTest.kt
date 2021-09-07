@@ -2,6 +2,7 @@ package com.deskshare
 
 import com.deskshare.dto.mapping.rest.toDto
 import com.deskshare.openapi.models.CreateReservationDto
+import com.deskshare.openapi.models.ReservationStatusDto
 import com.deskshare.openapi.models.UpdateReservationDto
 import com.deskshare.openapi.models.ViewReservationDto
 import com.deskshare.stubs.ReservationStub
@@ -20,7 +21,12 @@ class ApiTest {
         config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
     }
 
-    private inline fun <reified T> testCommand(method: HttpMethod, uri: String, message: Any?, crossinline block: T.(call: TestApplicationCall) -> Unit) = withApplication(testEnv) {
+    private inline fun <reified T> testCommand(
+        method: HttpMethod,
+        uri: String,
+        message: Any?,
+        crossinline block: T.(call: TestApplicationCall) -> Unit
+    ) = withApplication(testEnv) {
         handleRequest(method, uri) {
             addHeader(HttpHeaders.ContentType, "application/json")
             message?.let { setBody(om.writeValueAsString(message)) }
@@ -74,12 +80,13 @@ class ApiTest {
         testCommand<ViewReservationDto>(
             method = HttpMethod.Post,
             uri = "/reservations",
-            message = dto) { call: TestApplicationCall ->
-                assertEquals(HttpStatusCode.Created, call.response.status())
-                assertEquals(
-                    this,
-                    ReservationStub.getPendingModel().toDto()
-                )
+            message = dto
+        ) { call: TestApplicationCall ->
+            assertEquals(HttpStatusCode.Created, call.response.status())
+            assertEquals(
+                this,
+                ReservationStub.getPendingModel().toDto()
+            )
         }
     }
 
@@ -97,10 +104,15 @@ class ApiTest {
         testCommand<ViewReservationDto>(
             method = HttpMethod.Put,
             uri = "/reservations/123",
-            message = dto) { call: TestApplicationCall ->
-                assertEquals(HttpStatusCode.OK, call.response.status())
-                assertEquals(this, ReservationStub.getModel().toDto()
-            )
+            message = dto
+        ) { call: TestApplicationCall ->
+            assertEquals(HttpStatusCode.OK, call.response.status())
+            assertEquals(this.id, dto.id)
+            assertEquals(this.description, dto.description)
+            assertEquals(this.userId, dto.userId)
+            assertEquals(this.workspaceId, dto.workspaceId)
+            assertEquals(this.from, dto.from)
+            assertEquals(this.until, dto.until)
         }
     }
 
@@ -109,9 +121,11 @@ class ApiTest {
         testCommand<ViewReservationDto>(
             method = HttpMethod.Delete,
             uri = "/reservations/123",
-            message = null) { call: TestApplicationCall ->
-                assertEquals(HttpStatusCode.OK, call.response.status())
-                assertEquals(this, ReservationStub.getCanceledModel().toDto()
+            message = null
+        ) { call: TestApplicationCall ->
+            assertEquals(HttpStatusCode.OK, call.response.status())
+            assertEquals(
+                this, ReservationStub.getCanceledModel().toDto()
             )
         }
     }

@@ -15,7 +15,7 @@ fun ReservationModel.toDto() = ViewReservationDto(
     workspaceId = workspaceId.id,
     description = description,
     from = from.format(DateTimeFormatter.ISO_DATE_TIME),
-    until = from.format(DateTimeFormatter.ISO_DATE_TIME),
+    until = until.format(DateTimeFormatter.ISO_DATE_TIME),
     createdAt = createdAt.format(DateTimeFormatter.ISO_DATE_TIME),
     status = when (status) {
         ReservationStatus.PENDING -> ReservationStatusDto.PENDING
