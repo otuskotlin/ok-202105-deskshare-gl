@@ -4,21 +4,15 @@ import com.deskshare.common.context.RequestContext
 import com.deskshare.common.context.command.CreateCommandRequest
 import com.deskshare.cor.CorExecInterface
 import com.deskshare.cor.dsl.chain
-import com.deskshare.cor.dsl.configuration
-import com.deskshare.logics.chain.stub.ReservationCreateStub
-import com.deskshare.logics.worker.FinishWorker
-import com.deskshare.logics.worker.InitWorker
+import com.deskshare.logics.chain.stub.reservationCreateStub
+import com.deskshare.logics.config.chainConfiguration
+import com.deskshare.logics.worker.finishChainWorker
+import com.deskshare.logics.worker.initChainWorker
 
 object ReservationCreateChain :
     CorExecInterface<RequestContext<CreateCommandRequest>> by chain<RequestContext<CreateCommandRequest>>({
-        configuration {
-            logging = true
-        }
-
-        add(InitWorker())
-
-        add(ReservationCreateStub)
-
-        add(FinishWorker())
-
+        chainConfiguration()
+        initChainWorker(title = "Init create chain")
+        reservationCreateStub()
+        finishChainWorker()
     }).build()
