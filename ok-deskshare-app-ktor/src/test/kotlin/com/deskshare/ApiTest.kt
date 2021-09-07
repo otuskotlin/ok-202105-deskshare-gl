@@ -4,7 +4,7 @@ import com.deskshare.dto.mapping.rest.toDto
 import com.deskshare.openapi.models.CreateReservationDto
 import com.deskshare.openapi.models.UpdateReservationDto
 import com.deskshare.openapi.models.ViewReservationDto
-import com.deskshare.stubs.Reservation
+import com.deskshare.stubs.ReservationStub
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
@@ -78,7 +78,7 @@ class ApiTest {
                 assertEquals(HttpStatusCode.Created, call.response.status())
                 assertEquals(
                     this,
-                    Reservation.getPendingModel().toDto()
+                    ReservationStub.getPendingModel().toDto()
                 )
         }
     }
@@ -99,7 +99,7 @@ class ApiTest {
             uri = "/reservations/123",
             message = dto) { call: TestApplicationCall ->
                 assertEquals(HttpStatusCode.OK, call.response.status())
-                assertEquals(this, Reservation.getModel().toDto()
+                assertEquals(this, ReservationStub.getModel().toDto()
             )
         }
     }
@@ -111,7 +111,7 @@ class ApiTest {
             uri = "/reservations/123",
             message = null) { call: TestApplicationCall ->
                 assertEquals(HttpStatusCode.OK, call.response.status())
-                assertEquals(this, Reservation.getCanceledModel().toDto()
+                assertEquals(this, ReservationStub.getCanceledModel().toDto()
             )
         }
     }

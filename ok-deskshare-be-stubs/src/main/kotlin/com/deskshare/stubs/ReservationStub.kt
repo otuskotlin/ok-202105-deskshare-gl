@@ -3,7 +3,7 @@ package com.deskshare.stubs
 import com.deskshare.common.models.*
 import java.time.LocalDateTime
 
-object Reservation {
+object ReservationStub {
     private val reservationPending = ReservationModel(
         id = ReservationIdModel(id = "123"),
         userId = UserIdModel(id = "user"),

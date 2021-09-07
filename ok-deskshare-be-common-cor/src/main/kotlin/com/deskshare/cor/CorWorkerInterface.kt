@@ -9,11 +9,11 @@ interface CorWorkerInterface<T> : CorExecInterface<T>, CorLogInterface<T> {
     override suspend fun exec(ctx: T) {
         if (supports(ctx)) {
             try {
-                log(ctx, "start $title")
+                log(ctx, "Start: $title")
                 handle(ctx)
-                log(ctx, "end $title")
+                log(ctx, "Stop Ok: $title")
             } catch (e: Throwable) {
-                log(ctx, "error at $title")
+                log(ctx, "Stop !Ok: $title")
                 onError(ctx, e)
             }
         }

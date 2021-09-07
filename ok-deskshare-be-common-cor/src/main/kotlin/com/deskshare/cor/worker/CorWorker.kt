@@ -8,7 +8,7 @@ class CorWorker<T>(
     val blockSupports: T.() -> Boolean = { false },
     val blockHandle: T.() -> Unit = {},
     val blockOnError: T.(e: Throwable) -> Unit = { e: Throwable -> throw e },
-    val blockLogger: T.(msg: String) -> Unit
+    val blockLogger: T.(msg: String) -> Unit = {}
 ) : CorWorkerInterface<T> {
     override suspend fun supports(ctx: T): Boolean = blockSupports(ctx)
     override suspend fun handle(ctx: T) = blockHandle(ctx)

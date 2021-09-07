@@ -11,18 +11,19 @@ class CorTest {
     @Test
     fun `test CoR chain`() {
         val ctx = TestContext()
-        val chain = chain<TestContext> {
-            title = "tets of cor"
-            description = ""
+        val chain = chain<TestContext>(logger = { msg: String -> log(msg, this) }) {
+            title = "Test of CoR"
+            description = "Description"
 
             configuration {
-                logger { msg: String -> log(msg, this) }
-                logPropagation = true
+                logging = true
             }
 
             worker {
                 title = "foo worker"
-                description = ""
+                configuration {
+                    logging = false
+                }
                 supports { foo == 0 }
                 handle { foo++ }
                 onError { e: Throwable -> println("error foo") }
@@ -39,7 +40,7 @@ class CorTest {
             chain {
                 title = "sub chain"
                 description = ""
-                supports { bar == 1 && foo == 1}
+                supports { bar == 1 && foo == 1 }
                 worker {
                     title = "bar worker 2"
                     description = ""
@@ -60,12 +61,6 @@ class CorTest {
         val ctx = TestContext()
         val chain = chain<TestContext> {
             title = "parallel test"
-            description = ""
-
-            configuration {
-                logger { msg: String -> log(msg, this) }
-                logPropagation = true
-            }
 
             parallel {
                 title = "parallel"

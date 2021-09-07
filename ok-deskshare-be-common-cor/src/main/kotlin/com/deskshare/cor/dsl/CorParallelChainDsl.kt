@@ -15,16 +15,19 @@ class CorParallelChainDsl<T>(
     private val workers: MutableList<CorExecDslInterface<T>> = mutableListOf(),
     private var blockSupports: T.() -> Boolean = { true },
     private var blockOnError: T.(e: Throwable) -> Unit = { e: Throwable -> throw e },
-    private var config: CorWorkerConfigurationDsl<T> = CorWorkerConfigurationDsl<T>()
-): CorChainDslInterface<T> {
-
-    override fun getConfig(): CorWorkerConfigurationDsl<T> = config
-
+    private var blockLogger: T.(msg: String) -> Unit = { },
+    private var config: CorWorkerConfigurationDsl<T> = CorWorkerConfigurationDsl()
+) : CorChainDslInterface<T> {
     override fun addConfig(config: CorWorkerConfigurationDsl<T>) {
         this.config = config
     }
 
+    override fun logger(block: T.(msg: String) -> Unit) {
+        blockLogger = block
+    }
+
     override fun add(worker: CorExecDslInterface<T>) {
+        worker.logger(blockLogger)
         workers.add(worker)
     }
 
@@ -42,6 +45,6 @@ class CorParallelChainDsl<T>(
         workers = workers.map { it.build() },
         blockSupports = blockSupports,
         blockOnError = blockOnError,
-        blockLogger = config.logger
+        blockLogger = if (config.logging) {blockLogger} else {{}}
     )
 }

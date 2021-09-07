@@ -6,40 +6,40 @@ import com.deskshare.common.context.command.DeleteCommandRequest
 import com.deskshare.common.context.command.UpdateCommandRequest
 import com.deskshare.common.context.query.FindByFilterQueryRequest
 import com.deskshare.common.context.query.FindByIdQueryRequest
-import com.deskshare.stubs.Reservation
+import com.deskshare.stubs.ReservationStub
 
 class ReservationService : ReservationServiceInterface {
     override suspend fun create(ctx: RequestContext<CreateCommandRequest>) {
         ctx.apply {
-            request.responseModel = Reservation.getModel()
+            request.responseModel = ReservationStub.getModel()
             finishedOk()
         }
     }
 
     override suspend fun update(ctx: RequestContext<UpdateCommandRequest>) {
         ctx.apply {
-            request.responseModel = Reservation.getModel()
+            request.responseModel = ReservationStub.getModel()
             finishedOk()
         }
     }
 
     override suspend fun delete(ctx: RequestContext<DeleteCommandRequest>) {
         ctx.apply {
-            request.responseModel = Reservation.getCanceledModel()
+            request.responseModel = ReservationStub.getCanceledModel()
             finishedOk()
         }
     }
 
     override suspend fun findById(ctx: RequestContext<FindByIdQueryRequest>) {
         ctx.apply {
-            request.responseModels.add(Reservation.getModel())
+            request.responseModels.add(ReservationStub.getModel())
             finishedOk()
         }
     }
 
     override suspend fun findByFilter(ctx: RequestContext<FindByFilterQueryRequest>) {
         ctx.apply {
-            request.responseModels.addAll(Reservation.getModels())
+            request.responseModels.addAll(ReservationStub.getModels())
             finishedOk()
         }
     }

@@ -7,8 +7,8 @@ abstract class CorChainAbstract<T>(
     override val title: String,
     override val description: String,
     val workers: List<CorExecInterface<T>>,
-    val blockSupports: T.() -> Boolean = { false },
-    val blockOnError: T.(e: Throwable) -> Unit = { e: Throwable -> throw e },
+    val blockSupports: T.() -> Boolean,
+    val blockOnError: T.(e: Throwable) -> Unit,
     val blockLogger: T.(msg: String) -> Unit
 ) : CorWorkerInterface<T> {
     override suspend fun supports(ctx: T) = blockSupports(ctx)
