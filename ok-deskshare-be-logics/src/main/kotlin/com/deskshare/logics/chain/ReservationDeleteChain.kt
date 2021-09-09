@@ -14,7 +14,7 @@ object ReservationDeleteChain :
     CorExecInterface<RequestContext<DeleteCommandRequest>> by chain<RequestContext<DeleteCommandRequest>>({
         chainConfiguration()
         initChainWorker(title = "Init delete chain")
-        deleteChainValidation()
         reservationDeleteStub()
+        deleteChainValidation()
         finishChainWorker()
     }).build()

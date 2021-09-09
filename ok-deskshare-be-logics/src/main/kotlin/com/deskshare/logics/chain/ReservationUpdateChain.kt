@@ -14,7 +14,7 @@ object ReservationUpdateChain :
     CorExecInterface<RequestContext<UpdateCommandRequest>> by chain<RequestContext<UpdateCommandRequest>>({
         chainConfiguration()
         initChainWorker(title = "Init update chain")
-        updateChainValidation()
         reservationUpdateStub()
+        updateChainValidation()
         finishChainWorker()
     }).build()

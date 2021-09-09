@@ -14,7 +14,7 @@ object ReservationCreateChain :
     CorExecInterface<RequestContext<CreateCommandRequest>> by chain<RequestContext<CreateCommandRequest>>({
         chainConfiguration()
         initChainWorker(title = "Init create chain")
-        createChainValidation()
         reservationCreateStub()
+        createChainValidation()
         finishChainWorker()
     }).build()
