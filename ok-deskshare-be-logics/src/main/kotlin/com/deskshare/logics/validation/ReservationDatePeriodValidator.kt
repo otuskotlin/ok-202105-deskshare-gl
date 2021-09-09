@@ -1,17 +1,16 @@
 package com.deskshare.logics.validation
 
-import com.deskshare.common.context.RequestContext
-import com.deskshare.common.context.command.CreateCommandRequest
+import com.deskshare.common.models.ReservationModel
 import com.deskshare.validation.ValidationResult
 import com.deskshare.validation.ValidatorInterface
 import com.deskshare.validation.validator.ValidatorDateAfter
 
-class ReservationDatePeriodValidator: ValidatorInterface<RequestContext<CreateCommandRequest>> {
-    override fun validate(ctx: RequestContext<CreateCommandRequest>): ValidationResult {
-        val dateValidator = ValidatorDateAfter(field = "from", afterDate = ctx.request.responseModel.from)
+class ReservationDatePeriodValidator: ValidatorInterface<ReservationModel> {
+    override fun validate(model: ReservationModel): ValidationResult {
+        val dateValidator = ValidatorDateAfter(field = "from", afterDate = model.from)
         return ValidationResult(
             errors = listOf(
-                *dateValidator.validate(ctx.request.requestModel.until).errors.toTypedArray()
+                *dateValidator.validate(model.until).errors.toTypedArray()
             )
         )
     }

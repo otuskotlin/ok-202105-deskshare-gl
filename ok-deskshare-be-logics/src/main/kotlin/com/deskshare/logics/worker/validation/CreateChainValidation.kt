@@ -15,19 +15,7 @@ internal fun CorChainDslInterface<RequestContext<CreateCommandRequest>>.createCh
         supports { isRunning() }
         handle {
             val validationResult = CreateReservationValidator().validate(this)
-            validationResult.errors.forEach {
-                addError(
-                    CommonError(
-                        message = it.message,
-                        code = ErrorCode.Validation,
-                        level = ErrorLevel.ERROR,
-                        field = when(it) {
-                            is ValidationFieldErrorInterface -> it.field
-                            else -> ""
-                        }
-                    )
-                )
-            }
+            validationResult.mapIntoRequestContext(this)
         }
     }
 }
