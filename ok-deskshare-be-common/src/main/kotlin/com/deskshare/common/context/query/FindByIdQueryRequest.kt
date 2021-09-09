@@ -4,6 +4,6 @@ import com.deskshare.common.models.ReservationIdModel
 import com.deskshare.common.models.ReservationModel
 
 class FindByIdQueryRequest(
-    val reservationId: ReservationIdModel,
+    var reservationId: ReservationIdModel = ReservationIdModel.NONE,
     var responseModels: MutableList<ReservationModel> = mutableListOf()
 ) : QueryRequestInterface

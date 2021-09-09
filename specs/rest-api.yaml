@@ -543,6 +543,8 @@ components:
       properties:
         message:
           type: string
+        field:
+          type: string
 
     CollectionOfWorkspaceDto:
       type: object

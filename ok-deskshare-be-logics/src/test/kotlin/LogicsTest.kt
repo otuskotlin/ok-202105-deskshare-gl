@@ -5,6 +5,7 @@ import com.deskshare.common.context.command.DeleteCommandRequest
 import com.deskshare.common.context.command.UpdateCommandRequest
 import com.deskshare.common.context.query.FindByIdQueryRequest
 import com.deskshare.common.models.ReservationIdModel
+import com.deskshare.common.models.UserIdModel
 import com.deskshare.logics.ReservationManager
 import com.deskshare.stubs.ReservationStub
 import kotlinx.coroutines.runBlocking

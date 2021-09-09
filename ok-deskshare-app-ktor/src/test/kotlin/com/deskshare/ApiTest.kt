@@ -1,5 +1,6 @@
 package com.deskshare
 
+import com.deskshare.common.models.ReservationIdModel
 import com.deskshare.dto.mapping.rest.toDto
 import com.deskshare.openapi.models.CreateReservationDto
 import com.deskshare.openapi.models.ReservationStatusDto
@@ -14,6 +15,7 @@ import io.ktor.server.testing.*
 import org.junit.Test
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class ApiTest {
     private val om = ObjectMapper()
@@ -69,13 +71,9 @@ class ApiTest {
 
     @Test
     fun `new reservation`() {
-        val dto = CreateReservationDto(
-            description = "test",
-            userId = "123",
-            workspaceId = "123",
-            from = "2021-01-01T10:10:23",
-            until = "2021-01-01T15:10:23"
-        )
+        val dto = ReservationStub.getPendingModel()
+            .copy(id = ReservationIdModel(""))
+            .toDto()
 
         testCommand<ViewReservationDto>(
             method = HttpMethod.Post,
@@ -83,10 +81,12 @@ class ApiTest {
             message = dto
         ) { call: TestApplicationCall ->
             assertEquals(HttpStatusCode.Created, call.response.status())
-            assertEquals(
-                this,
-                ReservationStub.getPendingModel().toDto()
-            )
+            assertNotNull(this.id)
+            assertEquals(this.description, dto.description)
+            assertEquals(this.userId, dto.userId)
+            assertEquals(this.workspaceId, dto.workspaceId)
+            assertEquals(this.from, dto.from)
+            assertEquals(this.until, dto.until)
         }
     }
 

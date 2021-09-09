@@ -9,12 +9,13 @@ data class RequestContext<T: RequestInterface>(
     val stubCase: Boolean = false
 ) {
     var status = RequestContextStatus.None
-    private val requestStartedAt: Instant = Instant.now()
+    val requestStartedAt: Instant = Instant.now()
     var errors: MutableList<ErrorInterface> = mutableListOf()
         private set
 
     fun isStubCase() = stubCase
     fun isSuccess() = status == RequestContextStatus.Success
+    fun isRunning() = status == RequestContextStatus.Running
 
     fun addError(error: ErrorInterface) {
         errors.add(error)
