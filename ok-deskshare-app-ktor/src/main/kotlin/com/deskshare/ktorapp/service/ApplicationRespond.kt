@@ -16,10 +16,11 @@ suspend fun <T : RequestInterface> ApplicationCall.respond(ctx: RequestContext<T
 
 private fun <T : RequestInterface> getHttpStatusCode(ctx: RequestContext<T>): HttpStatusCode =
     // @todo other http codes (Auth, Validation error or not found)
-    when (ctx.isSuccess()) {
-        true -> when (ctx.request) {
+    if (ctx.isSuccess()) {
+        when (ctx.request) {
             is CreateCommandRequest -> HttpStatusCode.Created
             else -> HttpStatusCode.OK
         }
-        false -> HttpStatusCode.InternalServerError
+    } else {
+        HttpStatusCode.InternalServerError
     }

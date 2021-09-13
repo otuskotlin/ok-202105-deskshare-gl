@@ -1,6 +1,7 @@
 package com.deskshare.ktorapp.controller
 
 import com.deskshare.common.context.RequestContext
+import com.deskshare.common.context.RequestInterface
 import com.deskshare.common.context.command.CreateCommandRequest
 import com.deskshare.common.context.command.DeleteCommandRequest
 import com.deskshare.common.context.command.UpdateCommandRequest
@@ -17,93 +18,74 @@ class ReservationController(private val service: ReservationServiceInterface) : 
     private val stubCase: Boolean = true
 
     override suspend fun create(call: ApplicationCall) {
-        with(call) {
-            val commandCtx = RequestContext(
-                requestId = callId.toString(),
-                request = CreateCommandRequest(),
-                stubCase = stubCase
-            )
+        val commandCtx = RequestContext(
+            requestId = call.callId.toString(),
+            request = CreateCommandRequest(),
+            stubCase = stubCase
+        )
 
-            respond(
-                commandCtx, try {
-                    service.create(commandCtx, receive())
-                } catch (e: Throwable) {
-                    service.handleError(commandCtx, e)
-                }
-            )
-        }
+        call.handleRequest(ctx = commandCtx, service = service)
     }
 
     override suspend fun update(call: ApplicationCall) {
-        with(call) {
-            val commandCtx = RequestContext(
-                requestId = callId.toString(),
-                request = UpdateCommandRequest(),
-                stubCase = stubCase
-            )
+        val commandCtx = RequestContext(
+            requestId = call.callId.toString(),
+            request = UpdateCommandRequest(),
+            stubCase = stubCase
+        )
 
-            respond(
-                commandCtx, try {
-                    service.update(commandCtx, receive())
-                } catch (e: Throwable) {
-                    service.handleError(commandCtx, e)
-                }
-            )
-        }
+        call.handleRequest(ctx = commandCtx, service = service)
     }
 
     override suspend fun delete(call: ApplicationCall) {
-        with(call) {
-            val commandCtx = RequestContext(
-                requestId = call.callId.toString(),
-                request = DeleteCommandRequest(),
-                stubCase = stubCase
-            )
+        val commandCtx = RequestContext(
+            requestId = call.callId.toString(),
+            request = DeleteCommandRequest(),
+            stubCase = stubCase
+        )
 
-            respond(
-                commandCtx, try {
-                    service.delete(commandCtx, parameters["id"].toString())
-                } catch (e: Throwable) {
-                    service.handleError(commandCtx, e)
-                }
-            )
-        }
+        call.handleRequest(ctx = commandCtx, service = service)
     }
 
     override suspend fun findById(call: ApplicationCall) {
-        with(call) {
-            val queryCtx = RequestContext(
-                requestId = callId.toString(),
-                request = FindByIdQueryRequest(),
-                stubCase = stubCase
-            )
+        val queryCtx = RequestContext(
+            requestId = call.callId.toString(),
+            request = FindByIdQueryRequest(),
+            stubCase = stubCase
+        )
 
-            respond(
-                queryCtx, try {
-                    service.findById(queryCtx, parameters["id"].toString())
-                } catch (e: Throwable) {
-                    service.handleError(queryCtx, e)
-                }
-            )
-        }
+        call.handleRequest(ctx = queryCtx, service = service)
     }
 
     override suspend fun findAll(call: ApplicationCall) {
         // todo implement filter, paging etc.
-        with(call) {
-            val queryCtx = RequestContext(
-                requestId = callId.toString(),
-                request = FindByFilterQueryRequest(),
-                stubCase = stubCase
-            )
+        val queryCtx = RequestContext(
+            requestId = call.callId.toString(),
+            request = FindByFilterQueryRequest(),
+            stubCase = stubCase
+        )
 
-            respond(
-                queryCtx, try {
-                    service.findByFilter(queryCtx)
-                } catch (e: Throwable) {
-                    service.handleError(queryCtx, e)
-                }
-            )
-        }
+        call.handleRequest(ctx = queryCtx, service = service)
     }
+}
+
+private suspend inline fun <reified T : RequestInterface> ApplicationCall.handleRequest(
+    ctx: RequestContext<T>,
+    service: ReservationServiceInterface
+) {
+    respond(
+        ctx,
+        try {
+            when (T::class.java) {
+                CreateCommandRequest::class.java -> service.create(ctx as RequestContext<CreateCommandRequest>, receive())
+                UpdateCommandRequest::class.java -> service.update(ctx as RequestContext<UpdateCommandRequest>, receive())
+                DeleteCommandRequest::class.java -> service.delete(ctx as RequestContext<DeleteCommandRequest>, receive())
+                FindByIdQueryRequest::class.java -> service.findById(ctx as RequestContext<FindByIdQueryRequest>, parameters["id"].toString())
+                FindByFilterQueryRequest::class.java -> service.findByFilter(ctx as RequestContext<FindByFilterQueryRequest>)
+                else -> throw Error("Unknown request type")
+            }
+        } catch (e: Throwable) {
+            service.handleError(ctx, e)
+        }
+    )
 }
