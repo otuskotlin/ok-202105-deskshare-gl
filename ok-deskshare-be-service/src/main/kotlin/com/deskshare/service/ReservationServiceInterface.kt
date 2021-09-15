@@ -20,6 +20,4 @@ interface ReservationServiceInterface {
     // queries
     suspend fun findById(ctx: RequestContext<FindByIdQueryRequest>, reservationId: String): List<ViewReservationDto>
     suspend fun findByFilter(ctx: RequestContext<FindByFilterQueryRequest>): List<ViewReservationDto>
-
-    fun handleError(ctx: RequestContext<*>, e: Throwable): List<ResponseErrorDto>
 }

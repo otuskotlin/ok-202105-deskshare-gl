@@ -57,10 +57,4 @@ class ReservationService : ReservationServiceInterface {
         manager.findByFilter(ctx)
         return ctx.request.responseModels.map { it.toDto() }
     }
-
-    override fun handleError(ctx: RequestContext<*>, e: Throwable): List<ResponseErrorDto> {
-        ctx.finishedWithError(CommonError.fromThrowable(e))
-
-        return ctx.toErrorDto()
-    }
 }

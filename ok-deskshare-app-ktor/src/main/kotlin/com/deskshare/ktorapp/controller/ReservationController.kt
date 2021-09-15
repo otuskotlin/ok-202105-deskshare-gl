@@ -7,6 +7,8 @@ import com.deskshare.common.context.command.DeleteCommandRequest
 import com.deskshare.common.context.command.UpdateCommandRequest
 import com.deskshare.common.context.query.FindByFilterQueryRequest
 import com.deskshare.common.context.query.FindByIdQueryRequest
+import com.deskshare.common.models.error.CommonError
+import com.deskshare.dto.mapping.rest.toErrorDto
 import com.deskshare.ktorapp.service.respond
 import com.deskshare.service.ReservationServiceInterface
 import io.ktor.application.*
@@ -14,78 +16,53 @@ import io.ktor.features.*
 import io.ktor.request.*
 
 class ReservationController(private val service: ReservationServiceInterface) : ReservationControllerInterface {
-    // @todo read from header
-    private val stubCase: Boolean = true
-
     override suspend fun create(call: ApplicationCall) {
-        val commandCtx = RequestContext(
-            requestId = call.callId.toString(),
-            request = CreateCommandRequest(),
-            stubCase = stubCase
-        )
-
-        call.handleRequest(ctx = commandCtx, service = service)
+        call.handleRequest(request = CreateCommandRequest()) {
+            service.create(ctx = this, requestDto = call.receive())
+        }
     }
 
     override suspend fun update(call: ApplicationCall) {
-        val commandCtx = RequestContext(
-            requestId = call.callId.toString(),
-            request = UpdateCommandRequest(),
-            stubCase = stubCase
-        )
-
-        call.handleRequest(ctx = commandCtx, service = service)
+        call.handleRequest(request = UpdateCommandRequest()) {
+            service.update(ctx = this, requestDto = call.receive())
+        }
     }
 
     override suspend fun delete(call: ApplicationCall) {
-        val commandCtx = RequestContext(
-            requestId = call.callId.toString(),
-            request = DeleteCommandRequest(),
-            stubCase = stubCase
-        )
-
-        call.handleRequest(ctx = commandCtx, service = service)
+        call.handleRequest(request = DeleteCommandRequest()) {
+            service.delete(ctx = this, reservationId = call.parameters["id"].toString())
+        }
     }
 
     override suspend fun findById(call: ApplicationCall) {
-        val queryCtx = RequestContext(
-            requestId = call.callId.toString(),
-            request = FindByIdQueryRequest(),
-            stubCase = stubCase
-        )
-
-        call.handleRequest(ctx = queryCtx, service = service)
+        call.handleRequest(request = FindByIdQueryRequest()) {
+            service.findById(ctx = this, reservationId = call.parameters["id"].toString())
+        }
     }
 
     override suspend fun findAll(call: ApplicationCall) {
         // todo implement filter, paging etc.
-        val queryCtx = RequestContext(
-            requestId = call.callId.toString(),
-            request = FindByFilterQueryRequest(),
-            stubCase = stubCase
-        )
-
-        call.handleRequest(ctx = queryCtx, service = service)
+        call.handleRequest(request = FindByFilterQueryRequest()) {
+            service.findByFilter(ctx = this)
+        }
     }
 }
 
-private suspend inline fun <reified T : RequestInterface> ApplicationCall.handleRequest(
-    ctx: RequestContext<T>,
-    service: ReservationServiceInterface
+private suspend inline fun <U : Any, R : RequestInterface> ApplicationCall.handleRequest(
+    request: R,
+    block: RequestContext<R>.() -> U
 ) {
-    respond(
-        ctx,
-        try {
-            when (T::class.java) {
-                CreateCommandRequest::class.java -> service.create(ctx as RequestContext<CreateCommandRequest>, receive())
-                UpdateCommandRequest::class.java -> service.update(ctx as RequestContext<UpdateCommandRequest>, receive())
-                DeleteCommandRequest::class.java -> service.delete(ctx as RequestContext<DeleteCommandRequest>, receive())
-                FindByIdQueryRequest::class.java -> service.findById(ctx as RequestContext<FindByIdQueryRequest>, parameters["id"].toString())
-                FindByFilterQueryRequest::class.java -> service.findByFilter(ctx as RequestContext<FindByFilterQueryRequest>)
-                else -> throw Error("Unknown request type")
-            }
-        } catch (e: Throwable) {
-            service.handleError(ctx, e)
-        }
+    // todo read stub from http header
+    val ctx = RequestContext(
+        requestId = callId.toString(),
+        request = request,
+        stubCase = true
     )
+
+    try {
+        respond(ctx, ctx.block())
+    } catch (e: Throwable) {
+        ctx.finishedWithError(CommonError.fromThrowable(e))
+        respond(ctx, ctx.toErrorDto())
+    }
 }
