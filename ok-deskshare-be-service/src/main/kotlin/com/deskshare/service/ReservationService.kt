@@ -6,31 +6,55 @@ import com.deskshare.common.context.command.DeleteCommandRequest
 import com.deskshare.common.context.command.UpdateCommandRequest
 import com.deskshare.common.context.query.FindByFilterQueryRequest
 import com.deskshare.common.context.query.FindByIdQueryRequest
-import com.deskshare.stubs.Reservation
+import com.deskshare.common.models.ReservationIdModel
+import com.deskshare.common.models.error.CommonError
+import com.deskshare.dto.mapping.rest.toDto
+import com.deskshare.dto.mapping.rest.toErrorDto
+import com.deskshare.dto.mapping.rest.toModel
+import com.deskshare.logics.ReservationManager
+import com.deskshare.openapi.models.CreateReservationDto
+import com.deskshare.openapi.models.ResponseErrorDto
+import com.deskshare.openapi.models.UpdateReservationDto
+import com.deskshare.openapi.models.ViewReservationDto
 
 class ReservationService : ReservationServiceInterface {
-    override suspend fun <T : CreateCommandRequest> create(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModel = Reservation.getModel()
-        finishedOk()
+    private val manager: ReservationManager = ReservationManager()
+
+    override suspend fun create(
+        ctx: RequestContext<CreateCommandRequest>,
+        requestDto: CreateReservationDto
+    ): ViewReservationDto {
+        ctx.request.requestModel = requestDto.toModel()
+        manager.create(ctx)
+        return ctx.request.responseModel.toDto()
     }
 
-    override suspend fun <T : UpdateCommandRequest> update(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModel = Reservation.getModel()
-        finishedOk()
+    override suspend fun update(
+        ctx: RequestContext<UpdateCommandRequest>,
+        requestDto: UpdateReservationDto
+    ): ViewReservationDto {
+        ctx.request.requestModel = requestDto.toModel()
+        manager.update(ctx)
+        return ctx.request.responseModel.toDto()
     }
 
-    override suspend fun <T : DeleteCommandRequest> delete(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModel = Reservation.getCanceledModel()
-        finishedOk()
+    override suspend fun delete(
+        ctx: RequestContext<DeleteCommandRequest>,
+        reservationId: String
+    ): ViewReservationDto {
+        ctx.request.requestModelId = ReservationIdModel(reservationId)
+        manager.delete(ctx)
+        return ctx.request.responseModel.toDto()
     }
 
-    override suspend fun <T : FindByIdQueryRequest> findById(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModels.add(Reservation.getModel())
-        finishedOk()
+    override suspend fun findById(ctx: RequestContext<FindByIdQueryRequest>, reservationId: String): List<ViewReservationDto> {
+        ctx.request.reservationId = ReservationIdModel(reservationId)
+        manager.findById(ctx)
+        return ctx.request.responseModels.map { it.toDto() }
     }
 
-    override suspend fun <T : FindByFilterQueryRequest> findByFilter(ctx: RequestContext<T>): RequestContext<T> = ctx.apply {
-        request.responseModels.addAll(Reservation.getModels())
-        finishedOk()
+    override suspend fun findByFilter(ctx: RequestContext<FindByFilterQueryRequest>): List<ViewReservationDto> {
+        manager.findByFilter(ctx)
+        return ctx.request.responseModels.map { it.toDto() }
     }
 }

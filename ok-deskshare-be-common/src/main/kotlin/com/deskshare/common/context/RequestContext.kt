@@ -5,20 +5,21 @@ import java.time.Instant
 
 data class RequestContext<T: RequestInterface>(
     val requestId: String = "",
-    val request: T
+    val request: T,
+    val stubCase: Boolean = false
 ) {
-    private var status = RequestContextStatus.Pending
-    private val requestStartedAt: Instant = Instant.now()
+    var status = RequestContextStatus.None
+    val requestStartedAt: Instant = Instant.now()
     var errors: MutableList<ErrorInterface> = mutableListOf()
         private set
 
+    fun isStubCase() = stubCase
     fun isSuccess() = status == RequestContextStatus.Success
-    fun isFailed() = status == RequestContextStatus.Failure
-    fun isPending() = status == RequestContextStatus.Pending
+    fun isRunning() = status == RequestContextStatus.Running
 
     fun addError(error: ErrorInterface) {
         errors.add(error)
-        status = RequestContextStatus.Failure
+        status = RequestContextStatus.Failing
     }
 
     fun finishedOk() {

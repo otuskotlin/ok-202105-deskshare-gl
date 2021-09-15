@@ -3,13 +3,13 @@ package com.deskshare.stubs
 import com.deskshare.common.models.*
 import java.time.LocalDateTime
 
-object Reservation {
+object ReservationStub {
     private val reservationPending = ReservationModel(
         id = ReservationIdModel(id = "123"),
         userId = UserIdModel(id = "user"),
         workspaceId = WorkspaceIdModel(id = "1"),
         from = LocalDateTime.now(),
-        until = LocalDateTime.now(),
+        until = LocalDateTime.now().plusHours(1L),
         description = "my pending reservastion",
         status = ReservationStatus.PENDING,
         createdAt = LocalDateTime.now()
@@ -20,7 +20,7 @@ object Reservation {
         userId = UserIdModel(id = "user"),
         workspaceId = WorkspaceIdModel(id = "1"),
         from = LocalDateTime.now(),
-        until = LocalDateTime.now(),
+        until = LocalDateTime.now().plusHours(1L),
         description = "my checked in reservastion",
         status = ReservationStatus.CHECK_IN,
         createdAt = LocalDateTime.now()
@@ -31,7 +31,7 @@ object Reservation {
         userId = UserIdModel(id = "user"),
         workspaceId = WorkspaceIdModel(id = "1"),
         from = LocalDateTime.now(),
-        until = LocalDateTime.now(),
+        until = LocalDateTime.now().plusHours(1L),
         description = "my checked out reservastion",
         status = ReservationStatus.CHECK_OUT,
         createdAt = LocalDateTime.now()
@@ -42,7 +42,7 @@ object Reservation {
         userId = UserIdModel(id = "user"),
         workspaceId = WorkspaceIdModel(id = "1"),
         from = LocalDateTime.now(),
-        until = LocalDateTime.now(),
+        until = LocalDateTime.now().plusHours(1L),
         description = "my checked out reservastion",
         status = ReservationStatus.CANCELED,
         createdAt = LocalDateTime.now()
