@@ -1,10 +1,27 @@
 plugins {
     application
     kotlin("jvm")
+    id("com.bmuschko.docker-java-application")
 }
 
 application {
     mainClass.set("com.deskshare.kafkaapp.ApplicationKt")
+}
+
+docker {
+    javaApplication {
+        mainClassName.set(application.mainClass.get())
+        baseImage.set("adoptopenjdk/openjdk11:alpine-jre")
+        maintainer.set("Deskshare")
+        val imageName = project.name
+        images.set(
+            listOf(
+                "$imageName:${project.version}",
+                "$imageName:latest"
+            )
+        )
+        jvmArgs.set(listOf("-Xms256m", "-Xmx512m"))
+    }
 }
 
 dependencies {

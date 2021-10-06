@@ -33,3 +33,13 @@ services:
       SERVER_SERVLET_CONTEXTPATH: "/"
     depends_on:
       - kafka
+
+  app:
+    image: ok-deskshare-app-kafka:latest
+    depends_on:
+      - kafka
+    links:
+      - zookeeper
+      - kafka
+    environment:
+      KAFKA_HOSTS: kafka:9094
