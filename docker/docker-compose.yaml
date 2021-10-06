@@ -33,16 +33,3 @@ services:
       SERVER_SERVLET_CONTEXTPATH: "/"
     depends_on:
       - kafka
-
-#  app:
-#    image: ok-marketplace-be-app-kafka:0.0.1
-#    depends_on:
-#      - kafka
-#    links:
-#      - zookeeper
-#      - kafka
-#    environment:
-#      KAFKA_HOSTS: kafka:9092
-#      KAFKA_TOPIC_IN: marketplace-in
-#      KAFKA_TOPIC_OUT: marketplace-out
-
