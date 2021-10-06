@@ -6,7 +6,7 @@ services:
       - "2181"
 
   kafka:
-    image: wurstmeister/kafka:2.13-2.7.0
+    image: wurstmeister/kafka:2.13-2.7.1
     depends_on:
       - zookeeper
     ports:
@@ -21,6 +21,18 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CREATE_TOPICS: "reservationCreateIn:2:1,reservationUpdateIn:2:1,reservationDeleteIn:2:1,reservationCreateOut:2:1,reservationUpdateOut:2:1,reservationDeleteOut:2:1"
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9092
+      JVM_OPTS: "-Xms32M -Xmx64M"
+      SERVER_SERVLET_CONTEXTPATH: "/"
+    depends_on:
+      - kafka
 
 #  app:
 #    image: ok-marketplace-be-app-kafka:0.0.1

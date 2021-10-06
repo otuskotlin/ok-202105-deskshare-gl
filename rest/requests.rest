@@ -1,24 +1,24 @@
-POST http://127.0.0.1:8080/ad/create
+POST http://127.0.0.1:8080/reservations
 Content-Type: application/json
 
 {
-  "messageType": "CreateAdRequest",
-  "requestId": "12345",
-  "createAd": {
-    "title": "Болт",
-    "description": "КРУТЕЙШИЙ",
-    "ownerId": "9435",
-    "visibility": "public",
-    "dealSide": "demand",
-    "product": {
-      "productType": "AdProductBolt",
-      "threadPitch": 13.0,
-      "diameter": 2.0,
-      "lengh": 10.3
-    }
-  },
-  "debug": {
-    "mode": "stub",
-    "stub": "success"
-  }
+    "description": "test",
+    "userId": "123",
+    "workspaceId": "123",
+    "from": "2021-01-01T10:10:15",
+    "until": "2021-01-01T18:10:15"
 }
+
+PUT http://127.0.0.1:8080/reservations/1
+Content-Type: application/json
+
+{
+    "id": "1",
+    "description": "test",
+    "userId": "123",
+    "workspaceId": "123",
+    "from": "2021-01-01T10:10:15",
+    "until": "2021-01-01T18:10:15"
+}
+
+DELETE http://127.0.0.1:8080/reservations/1

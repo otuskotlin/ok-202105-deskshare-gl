@@ -36,18 +36,18 @@ class Consumer(
         }
     }
 
-    fun handle(block: (message: String) -> Unit) = runBlocking {
+    fun handle(block: (message: String) -> Unit) = Thread(Runnable{
         process = true
         kafkaConsumer.use { kc ->
             while (process) {
                 kc.poll(Duration.ofMillis(1000L))?.forEach {
-                    withContext(Dispatchers.IO) { block(it?.value() ?: "???") }
+                    block(it?.value() ?: "???")
                     // @todo commit with chunks
                     kafkaConsumer.commitSync()
                 }
             }
         }
-    }
+    }).start()
 
     fun stop() {
         process = false

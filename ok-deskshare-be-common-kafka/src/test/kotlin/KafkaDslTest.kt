@@ -61,12 +61,10 @@ class KafkaDslTest {
             consumer(topicIn, "GroupID", kafkaConsumerMock) {
                 handle { message: String ->
                     results.add(message)
+                    assertEquals("Hello", results[0])
                     stop()
                 }
             }
         }
-
-        assertEquals(1, results.size)
-        assertEquals("Hello", results[0])
     }
 }

@@ -69,11 +69,12 @@ class KafkaTest {
         var results: MutableList<TestContainer> = mutableListOf()
         consumer.handle { message:String ->
             results.add(message.fromJson())
+
+            assertEquals(1, results.size)
+            assertEquals(10, results[0].age)
+            assertEquals("Grischa", results[0].name)
         }
 
-        assertEquals(1, results.size)
-        assertEquals(10, results[0].age)
-        assertEquals("Grischa", results[0].name)
     }
 }
 

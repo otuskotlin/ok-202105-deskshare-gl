@@ -1,20 +1,11 @@
 package com.deskshare.kafkaapp
 
 import com.deskshare.kafka.KafkaConfig
-import com.deskshare.kafka.dsl.kafka
+import com.deskshare.service.ReservationService
 
 fun main() {
     val kafkaConfig = KafkaConfig()
-
-    kafka(kafkaConfig) {
-        consumer("topic1", "23") {
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stop() }))
-
-            handle { message: String ->
-                println("_____")
-                println(message)
-                println("_____")
-            }
-        }
-    }
+    val service = ReservationService()
+    val kafkaApplication = KafkaApplication(kafkaConfig, service)
+    kafkaApplication.run()
 }
