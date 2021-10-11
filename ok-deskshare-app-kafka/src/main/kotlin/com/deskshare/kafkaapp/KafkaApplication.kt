@@ -13,7 +13,6 @@ import com.deskshare.openapi.models.CreateReservationDto
 import com.deskshare.openapi.models.UpdateReservationDto
 import com.deskshare.service.ReservationServiceInterface
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class KafkaApplication(
@@ -26,42 +25,36 @@ class KafkaApplication(
         kafka(kafkaConfig) {
             consumer("reservationCreateIn", "reservationCreate") {
                 handle { message: String ->
-                    runBlocking {
-                        val dto = om.readValue(message, CreateReservationDto::class.java)
-                        handleRequest(topicOut = "reservationCreateOut", request = CreateCommandRequest()) {
-                            service.create(ctx = this, requestDto = dto)
-                        }
+                    val dto = om.readValue(message, CreateReservationDto::class.java)
+                    handleRequest(topicOut = "reservationCreateOut", request = CreateCommandRequest()) {
+                        service.create(ctx = this, requestDto = dto)
                     }
                 }
             }
 
             consumer("reservationUpdateIn", "reservationUpdate") {
                 handle { message: String ->
-                    runBlocking {
-                        val dto = om.readValue(message, UpdateReservationDto::class.java)
-                        handleRequest(topicOut = "reservationUpdateOut", request = UpdateCommandRequest()) {
-                            service.update(ctx = this, requestDto = dto)
-                        }
+                    val dto = om.readValue(message, UpdateReservationDto::class.java)
+                    handleRequest(topicOut = "reservationUpdateOut", request = UpdateCommandRequest()) {
+                        service.update(ctx = this, requestDto = dto)
                     }
                 }
             }
 
             consumer("reservationDeleteIn", "reservationDelete") {
                 handle { message: String ->
-                    runBlocking {
-                        handleRequest(topicOut = "reservationDeleteOut", request = DeleteCommandRequest()) {
-                            service.delete(ctx = this, reservationId = message)
-                        }
+                    handleRequest(topicOut = "reservationDeleteOut", request = DeleteCommandRequest()) {
+                        service.delete(ctx = this, reservationId = message)
                     }
                 }
             }
         }
     }
 
-    private inline fun <U : Any, R : RequestInterface> handleRequest(
+    private suspend inline fun <U : Any, R : RequestInterface> handleRequest(
         topicOut: String,
         request: R,
-        block: RequestContext<R>.() -> U
+        block: suspend RequestContext<R>.() -> U
     ) {
         // todo read stub from kafka message header
         val ctx = RequestContext(

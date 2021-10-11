@@ -1,5 +1,5 @@
 .PHONY: help
-.PHONY: docker-connect-php docker-build docker-start docker-stop docker-status docker-up
+.PHONY: docker-build docker-start docker-stop docker-status docker-up
 
 .DEFAULT_GOAL := help
 
