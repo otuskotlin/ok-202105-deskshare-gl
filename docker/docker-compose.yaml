@@ -1,0 +1,45 @@
+version: "3.3"
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:3.4.6
+    expose:
+      - "2181"
+
+  kafka:
+    image: wurstmeister/kafka:2.13-2.7.1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9094"
+    volumes:
+      - ./kfdata:/kafka
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,OUTSIDE://localhost:9094
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CREATE_TOPICS: "reservationCreateIn:2:1,reservationUpdateIn:2:1,reservationDeleteIn:2:1,reservationCreateOut:2:1,reservationUpdateOut:2:1,reservationDeleteOut:2:1"
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9092
+      JVM_OPTS: "-Xms32M -Xmx64M"
+      SERVER_SERVLET_CONTEXTPATH: "/"
+    depends_on:
+      - kafka
+
+  app:
+    image: ok-deskshare-app-kafka:latest
+    depends_on:
+      - kafka
+    links:
+      - zookeeper
+      - kafka
+    environment:
+      KAFKA_HOSTS: kafka:9094
