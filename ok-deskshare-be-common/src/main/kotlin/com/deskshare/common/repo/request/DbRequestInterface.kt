@@ -1,3 +1,3 @@
-package com.deskshare.common.repo
+package com.deskshare.common.repo.request
 
 interface DbRequestInterface

@@ -1,4 +1,4 @@
-package com.deskshare.common.repo
+package com.deskshare.common.repo.response
 
 import com.deskshare.common.models.error.CommonError
 
