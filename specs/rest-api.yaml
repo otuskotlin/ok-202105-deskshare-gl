@@ -471,6 +471,7 @@ components:
         - canceled
         - check_in
         - check_out
+        - none
 
     CollectionOfReservationDto:
       type: object

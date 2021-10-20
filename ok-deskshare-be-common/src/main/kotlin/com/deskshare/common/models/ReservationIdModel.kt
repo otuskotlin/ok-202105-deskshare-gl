@@ -5,6 +5,7 @@ import java.util.UUID.*
 @JvmInline
 value class ReservationIdModel(val id: String) {
     companion object {
+        fun fromRandom() = ReservationIdModel(randomUUID().toString())
         val NONE = ReservationIdModel("")
         val UUID = ReservationIdModel(randomUUID().toString())
     }
