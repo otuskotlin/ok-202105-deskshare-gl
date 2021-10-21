@@ -32,6 +32,7 @@ data class ReservationItem(
         workspaceId = workplaceId?.let { WorkspaceIdModel(workplaceId) } ?: WorkspaceIdModel.NONE,
         from = from?.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) } ?: LocalDateTime.now(),
         until = until?.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) } ?: LocalDateTime.now(),
-        status = status?.let { ReservationStatus.valueOf(it) } ?: ReservationStatus.NONE
+        status = status?.let { ReservationStatus.valueOf(it) } ?: ReservationStatus.NONE,
+        createdAt = createdAt?.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) } ?: LocalDateTime.now()
     )
 }

@@ -6,7 +6,6 @@ import com.deskshare.common.repo.request.DbReservationRequest
 import com.deskshare.stubs.ReservationStub
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-import java.util.*
 import kotlin.test.*
 
 abstract class RepoReservationUpdateTest {
