@@ -22,6 +22,7 @@ fun ReservationModel.toDto() = ViewReservationDto(
         ReservationStatus.CANCELED -> ReservationStatusDto.CANCELED
         ReservationStatus.CHECK_IN -> ReservationStatusDto.CHECK_IN
         ReservationStatus.CHECK_OUT -> ReservationStatusDto.CHECK_OUT
+        ReservationStatus.NONE -> ReservationStatusDto.NONE
     }
 )
 
